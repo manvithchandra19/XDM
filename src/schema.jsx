@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
-import {} from "./schema.css";
+import "./schema.css";
 import {NavLink} from "reactstrap";
 import { Octokit } from "@octokit/core";
+
+const { createPullRequest } = require("octokit-plugin-create-pull-request");
 
 const Schema = () => {
   const [schemaType, setSchemaType] = useState("class");
@@ -17,20 +19,21 @@ const Schema = () => {
   const [jsonOutput, setjsonOutput] = useState("");
   
   
-  const octokit = new Octokit({ auth: '328087a394cd90ff8fe51d17912cd136178456a8' }),
-      owner = 'manvithchandra19',
-      repo = 'test',
-      title = 'My Test Pull Request',
-      body  = 'This pull request is a test!',
-      head  = 'xdm',
-      base  = 'test';
+  // const octokit = new Octokit({ 
+  //   auth: '328087a394cd90ff8fe51d17912cd136178456a8',
+  // }), owner = 'manvithchandra19',
+  //     repo = 'test',
+  //     title = 'My Test Pull Request',
+  //     body  = 'This pull request is a test!',
+  //     head  = 'gh-pages',
+  //     base  = 'gh-pages';
 
-  useEffect(() => {
-    // const response =  octokit.request( `POST /repos/manvithchandra19/{repo}/pulls`, { owner, repo, title, body, head, base });
+  const MyOctokit = Octokit.plugin(createPullRequest);
 
-  }, [])
-       
-  const response =  octokit.request( `POST /repos/manvithchandra19/XDM/pulls`, { owner, repo, title, body, head, base });
+  const TOKEN = "328087a394cd90ff8fe51d17912cd136178456a8"; // create token at https://github.com/settings/tokens/new?scopes=repo
+  const octokit = new MyOctokit({
+    auth: TOKEN,
+  });
 
   const [inputList, setInputList] = useState([{ titleID: '', titleXDM: "", typeXDM: "",descriptionXDM : '' }]);
 
@@ -91,7 +94,7 @@ const Schema = () => {
       .then((response) => response.json())
       .then((response) => {
         setjsonOutput(JSON.stringify(response, undefined, 4));
-        console.log(response);
+        console.log(response); // pass to pr
         clearText();
       })
       .catch((error) => {
@@ -131,14 +134,53 @@ const Schema = () => {
     }
   };
 
+  const createPR = () => {
+
+    octokit.createPullRequest({
+      owner: "manvithchandra19",
+      repo: "test",
+      title: "pull request title",
+      body: "pull request description",
+      base: "master" /* optional: defaults to default branch */,
+      head: "pull-request-branch-name",
+      changes: [
+        {
+          /* optional: if `files` is not passed, an empty commit is created instead */
+          // files: {
+          //   "path/to/file1.txt": "Content for file1",
+          //   "path/to/file2.png": {
+          //     content: "_base64_encoded_content_",
+          //     encoding: "base64",
+          //   },
+          //   // deletes file if it exists,
+          //   "path/to/file3.txt": null,
+          //   // updates file based on current content
+          //   "path/to/file4.txt": ({ exists, encoding, content }) => {
+          //     // do not create the file if it does not exist
+          //     if (!exists) return null;
+  
+          //     return Buffer.from(content, encoding)
+          //       .toString("utf-8")
+          //       .toUpperCase();
+          //   },
+          // },
+          commit: "creating file1.txt, file2.png, deleting file3.txt, updating file4.txt (if it exists)",
+        },
+      ],
+    })
+    .then((pr) => console.log(pr.data.number));
+    
+
+  }
+
   
 
   return (
     <div>
         <h3 style={{ textAlign: "center" }}>XDM Tool</h3>
       
-      <div class="split left">
-        <div class="centered ">
+      <div className="split left">
+        <div className="centered ">
           <label>Schema Type </label>
           <select onChange={handleOption}>
             {schema_Type.map((item) => (
@@ -181,7 +223,7 @@ const Schema = () => {
           />{" "}
           <br /> <br />
           {inputList.map((x, i) => {
-              return (  <div>
+              return (  <div key={i}>
                     <label> XDM TitleID</label>
                 <input
                   type="text"
@@ -238,14 +280,15 @@ const Schema = () => {
           <br />
           <br />
           <button onClick={submitApi}>Submit</button>
+          <button onClick={() => { createPR()}}>Create PR</button>
           <NavLink href="https://github.com/manvithchandra19/test/compare"> {" "} Submit to GitHub </NavLink>
           <br />
           <br />
         </div>
       </div>
-      <div class="split right">
+      <div className="split right">
 
-        <textarea class="textArea" defaultValue={jsonOutput}></textarea>
+        <textarea className="textArea" defaultValue={jsonOutput}></textarea>
       </div>
     </div>
   );
