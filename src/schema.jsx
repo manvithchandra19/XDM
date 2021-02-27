@@ -17,14 +17,20 @@ const Schema = () => {
   const [jsonOutput, setjsonOutput] = useState("");
   
   
-    const octokit = new Octokit({ auth: '09b3fcd9ff2d5ea58f364067d947ece802d18a73' }),
-        owner = 'manvithchandra19',
-        repo = 'test',
-        title = 'My Test Pull Request',
-        body  = 'This pull request is a test!',
-        head  = 'xdm',
-        base  = 'test';
+  const octokit = new Octokit({ auth: '328087a394cd90ff8fe51d17912cd136178456a8' }),
+      owner = 'manvithchandra19',
+      repo = 'test',
+      title = 'My Test Pull Request',
+      body  = 'This pull request is a test!',
+      head  = 'xdm',
+      base  = 'test';
+
+  useEffect(() => {
+    // const response =  octokit.request( `POST /repos/manvithchandra19/{repo}/pulls`, { owner, repo, title, body, head, base });
+
+  }, [])
        
+  const response =  octokit.request( `POST /repos/manvithchandra19/XDM/pulls`, { owner, repo, title, body, head, base });
 
   const [inputList, setInputList] = useState([{ titleID: '', titleXDM: "", typeXDM: "",descriptionXDM : '' }]);
 
@@ -125,7 +131,7 @@ const Schema = () => {
     }
   };
 
-  // const response =  octokit.request( `POST /repos/{owner}/{repo}/pulls`, { owner, repo, title, body, head, base });
+  
 
   return (
     <div>
