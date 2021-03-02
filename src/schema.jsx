@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
-import {} from "./schema.css";
+import "./schema.css";
 import {NavLink} from "reactstrap";
 import { Octokit } from "@octokit/core";
+
+const { createPullRequest } = require("octokit-plugin-create-pull-request");
 
 const Schema = () => {
   const [schemaType, setSchemaType] = useState("class");
@@ -17,16 +19,24 @@ const Schema = () => {
   const [jsonOutput, setjsonOutput] = useState("");
   
   
-    const octokit = new Octokit({ auth: '09b3fcd9ff2d5ea58f364067d947ece802d18a73' }),
-        owner = 'manvithchandra19',
-        repo = 'test',
-        title = 'My Test Pull Request',
-        body  = 'This pull request is a test!',
-        head  = 'xdm',
-        base  = 'test';
-       
+  // const octokit = new Octokit({ 
+  //   auth: '328087a394cd90ff8fe51d17912cd136178456a8',
+  // }), owner = 'manvithchandra19',
+  //     repo = 'test',
+  //     title = 'My Test Pull Request',
+  //     body  = 'This pull request is a test!',
+  //     head  = 'gh-pages',
+  //     base  = 'gh-pages';
+
+  const MyOctokit = Octokit.plugin(createPullRequest);
+
+  const TOKEN = "8b5b40b47be62ef29a20125cf8796020537b1afb"; // create token at https://github.com/settings/tokens/new?scopes=repo
+  const octokit = new MyOctokit({
+    auth: TOKEN,
+  });
 
   const [inputList, setInputList] = useState([{ titleID: '', titleXDM: "", typeXDM: "",descriptionXDM : '' }]);
+  const [inputList1, setInputList1] = useState([{ schemaName: '', titlemain: "", schema_Type: "",description : '' }]);
 
   const schema_Type = ["class", "mixin", "datatype"];
   const behaviours = ["record", "timeseries"];
@@ -49,10 +59,15 @@ const Schema = () => {
     console.log(inputList);
   };
 
+
   const handleAddClick = () => {
-    setInputList([...inputList, { titleID: '', titleXDM: "", typeXDM: "",descriptionXDM : '' }]);
+    setInputList([...inputList, { titleID: '', titleXDM: "", typeXDM: "",description : '' }]);
     console.log(inputList);
   };
+  const handleAddClick1 = () => {
+    setInputList1([...inputList1, { schemaName: "", titlemain: "", schema_Type: "",descriptionXDM : "" }]);
+    console.log(inputList1);
+    };
 
   const submitApi = () => {
     var details = {
@@ -67,6 +82,7 @@ const Schema = () => {
       schemaName: schemaName,
       schemaType: schemaType,
     };
+
     var formBody = [];
     for (var property in details) {
       var encodedKey = encodeURIComponent(property);
@@ -85,7 +101,7 @@ const Schema = () => {
       .then((response) => response.json())
       .then((response) => {
         setjsonOutput(JSON.stringify(response, undefined, 4));
-        console.log(response);
+        console.log(response); // pass to pr
         clearText();
       })
       .catch((error) => {
@@ -93,8 +109,8 @@ const Schema = () => {
       });
   };
   const clearText = () => {
-    setSchemaName("");
-    setSchemaType("");
+    // setSchemaName("");
+    // setSchemaType("");
     setDescriptionXmd("");
     setDescription("");
     setTitleXmd("");
@@ -125,14 +141,53 @@ const Schema = () => {
     }
   };
 
-  // const response =  octokit.request( `POST /repos/{owner}/{repo}/pulls`, { owner, repo, title, body, head, base });
+  const createPR = () => {
+console.log(schemaName);
+    octokit.createPullRequest({
+      owner: "manvithchandra19",
+      repo: "test1",
+      title: "pullrequest3",
+      body: "pull request description",
+      base: "master" /* optional: defaults to default branch */,
+      head: "pull-request-branch-name3",
+      changes: [
+        {
+          /* optional: if `files` is not passed, an empty commit is created instead */
+          files: {
+            // "path/to/file1.txt": "Content for file1",
+            [`${schemaName}`]: {
+              content: jsonOutput,
+              // encoding: "base64",
+            },
+            // // deletes file if it exists,
+            // "path/to/file3.txt": null,
+            // // updates file based on current content
+            // "path/to/file4.txt": ({ exists, encoding, content }) => {
+            //   // do not create the file if it does not exist
+            //   if (!exists) return null;
+  
+            //   return Buffer.from(content, encoding)
+            //     .toString(jsonOutput)
+            //     .toUpperCase();
+            // },
+          },
+          commit: "Test PR",
+        },
+      ],
+    })
+    .then((pr) => console.log(pr.data.number));
+    
+
+  }
+
+  
 
   return (
     <div>
         <h3 style={{ textAlign: "center" }}>XDM Tool</h3>
       
-      <div class="split left">
-        <div class="centered ">
+      <div className="split left">
+        <div className="centered ">
           <label>Schema Type </label>
           <select onChange={handleOption}>
             {schema_Type.map((item) => (
@@ -175,7 +230,7 @@ const Schema = () => {
           />{" "}
           <br /> <br />
           {inputList.map((x, i) => {
-              return (  <div>
+              return (  <div key={i}>
                     <label> XDM TitleID</label>
                 <input
                   type="text"
@@ -228,18 +283,22 @@ const Schema = () => {
           <br />
           <button onClick={handleAddClick}>Add Properties</button>{" "}
           &nbsp;&nbsp;&nbsp;
-          <button onClick={submitApi}>Add Object</button>
+          <button onClick={handleAddClick1}>Add Object</button>
           <br />
           <br />
           <button onClick={submitApi}>Submit</button>
-          <NavLink href="https://github.com/manvithchandra19/test/compare"> {" "} Submit to GitHub </NavLink>
+          {/* <button onClick={() => { createPR()}}>Create PR</button> */}
+          {/* <NavLink href="https://github.com/manvithchandra19/test/compare"> {" "} Submit to GitHub </NavLink> */}
           <br />
           <br />
         </div>
       </div>
-      <div class="split right">
+      <div className="split right">
+      <button onClick={() => { createPR()}}>Create PR</button>
 
-        <textarea class="textArea" defaultValue={jsonOutput}></textarea>
+
+        <textarea className="textArea" defaultValue={jsonOutput}></textarea>
+        
       </div>
     </div>
   );
