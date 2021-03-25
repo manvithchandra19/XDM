@@ -12,7 +12,9 @@ const RightPanel = (props) => {
     }, [props.jsonData])
 
     return (<div style={{display: 'flex', flexDirection: 'column', width: '100%'}}>
-        <div style={{height: '70px'}}>BUTTONS FOR PR</div>
+        <div style={{height: '70px'}}>
+            <div onClick={() => props.onPRClick()}>DO PR</div>
+        </div>
         <JSONInput
             id="panel1"
             placeholder={jsonData} // data to display
