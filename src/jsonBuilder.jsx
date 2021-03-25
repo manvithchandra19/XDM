@@ -30,8 +30,9 @@ import { InputTextarea } from 'primereact/inputtextarea';
 import { Dropdown } from 'primereact/dropdown';
 import './Dropdown.css';
 
-import JSONInput from 'react-json-editor-ajrm';
-import locale    from 'react-json-editor-ajrm/locale/en';
+// import JSONInput from 'react-json-editor-ajrm';
+// import locale    from 'react-json-editor-ajrm/locale/en';
+import RightPanel from "./rightPanel";
 
 const { createPullRequest } = require("octokit-plugin-create-pull-request");
 
@@ -262,7 +263,7 @@ const Schema = () => {
                 <TextField InputProps={{ className: classes.input }} InputLabelProps={{ shrink: true }} id="outlined-basic" label="Property Description" variant="outlined" name="propertyDescription"
                     value={objVal.description}
                     onChange={updateHandlerFactory("description", i)} />
-                <IconButton aria-label="Delete" className={classes.margin} onClick={() => deleteProperty(definitions, i)}>
+                <IconButton style={{width: '50px'}} aria-label="Delete" className={classes.margin} onClick={() => deleteProperty(definitions, i)}>
                     <DeleteIcon fontSize="small" />
                 </IconButton>
                 {nestedValues.map((nv, ni) => {
@@ -319,21 +320,22 @@ const Schema = () => {
                      
                         <Divider orientation="vertical" flexItem />
                         
-                        <div className="card">
+                        <div className="card" style={{width: '100%'}}>
                      
                             <Splitter style={{ height: '100%'}} className="p-mb-5">
                                 <SplitterPanel  className="p-d-flex p-ai-center p-jc-center" size={1    } minSize={1} style= {{backgroundColor: 'lightgray'}}><div style = {{width:100}}>
-                            <Button variant="contained" color={classColor} className={classes.button} onClick={getLabelNamesClass}>
-                                Class
-      </Button><br />
-                            <Button variant="contained" color={mixinColor} className={classes.button} onClick={getLabelNamesMixin}>
-                                Mixin
-      </Button><br />
-                            <Button variant="contained" color={datatypeColor} className={classes.button} onClick={getLabelNamesDataType}>
-                                Datatype
-      </Button><br />
-                        </div></SplitterPanel>
-                                <SplitterPanel className="p-d-flex p-ai-center p-jc-center" >
+                                                        <Button variant="contained" color={classColor} className={classes.button} onClick={getLabelNamesClass}>
+                                                            Class
+                                </Button><br />
+                                                        <Button variant="contained" color={mixinColor} className={classes.button} onClick={getLabelNamesMixin}>
+                                                            Mixin
+                                </Button><br />
+                                                        <Button variant="contained" color={datatypeColor} className={classes.button} onClick={getLabelNamesDataType}>
+                                                            Datatype
+                                </Button><br />
+                        </div>
+                            </SplitterPanel>
+                            <SplitterPanel width="479px" className="p-d-flex p-ai-center p-jc-center" >
                                     <div className={classes.root} >  <TextField
                                         label={labelSchemaName} variant="filled" value={schemaName} onChange={(e) => setschemaName(e.target.value)} />
                                         <TextField
@@ -417,15 +419,17 @@ const Schema = () => {
     editButtonContent='Edit this code'
     value={JSON.stringify(finalJsonOutput(definitions, jsonData), undefined, 4)}  
    onSave={onSave}/> */}
-   <JSONInput
-          placeholder={finalJsonOutput(definitions, jsonData)} // data to display
-        //   theme="light_mitsuketa_tribute"
-          locale={locale}
-          colors={{
-            string: "#DAA520" // overrides theme colors with whatever color value you want
-          }}
-          height="550px"
-        />
+
+                                    {/* <JSONInput
+                                        placeholder={finalJsonOutput(definitions, jsonData)} // data to display
+                                        //   theme="light_mitsuketa_tribute"
+                                        locale={locale}
+                                        colors={{
+                                            string: "#DAA520" // overrides theme colors with whatever color value you want
+                                        }}
+                                        height="550px"
+                                    /> */}
+                                    <RightPanel jsonData={finalJsonOutput(definitions, jsonData)}/>
                                     
                                 </SplitterPanel>
                             </Splitter>
