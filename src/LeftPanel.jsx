@@ -70,7 +70,7 @@ const LeftPanel = (props) => {
     const onClassChange = (e) => {
         console.log(e.value.name);
         setClassName(e.value);
-        setbehaviour(e.value.name)
+        props.setbehaviour(e.value.name)
     }
 
     const onmixinChange = (e) => {
