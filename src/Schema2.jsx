@@ -177,12 +177,11 @@ const Schema2 = () => {
 
 
 
-
     // dummy state
     const [schemaObjects, setSchemaObjects] = useState([
         {type: 'class', jsonData: {key: 'CLASS', someOtherKey: 'VALUE'}},
-        //  {type: 'mixin', jsonData: {key: 'MIXIN', someOtherKey: 'VALUE2'}},
-        //  {type: 'datatype', jsonData: {key: 'DATATYPE', someOtherKey: 'VALUE3'}}
+        {type: 'mixin', jsonData: {key: 'MIXIN', someOtherKey: 'VALUE2'}},
+        // {type: 'datatype', jsonData: {key: 'DATATYPE', someOtherKey: 'VALUE3'}}
     ])
 
     const [activeSchema, setActiveSchema] = useState(schemaObjects[0])
@@ -190,7 +189,27 @@ const Schema2 = () => {
     const onDeleteSchema = (index) => {
         alert('handle delete schema, remove index from schmeObjects Array')
     }
+
+
+    const onJRTESTChangeHandler = (value, index) => {
+        // console.log('ACTIVESCHEMA', activeSchema);
+        // make copies of state
+        const activeSchemaCopy = JSON.parse(JSON.stringify(activeSchema));
+        const schemaObjectsCopy = JSON.parse(JSON.stringify(schemaObjects));
+
+        // change values
+        activeSchemaCopy.jsonData.key = value;
+        schemaObjectsCopy[index].jsonData.key = value;
+
+        // console.log('COPY', activeSchemaCopy)
+        
+        setActiveSchema(activeSchemaCopy);
+        setSchemaObjects(schemaObjectsCopy);
+
+        // console.log('VALUE', value, index)
+    }
     
+    console.log('SCHEMA2', finalJsonOutput(definitions, jsonData))
 
     return (<>
         {/* Navigation Bar */}
@@ -223,17 +242,17 @@ const Schema2 = () => {
             {/* Left and Right Splitter Pane */}
             <Splitter style={{height: '100%', width: '100%'}} layout="horizontal">
                 <SplitterPanel >
-                    <LeftPanel schemas={schemaObjects} deleteSchema={(index) => onDeleteSchema(index)} setActiveSchema={(index) => setActiveSchema(schemaObjects[index])}>
-
-                        
-                        
-                    </LeftPanel>
+                    <LeftPanel 
+                    onJRTESTChange={(value, index) => onJRTESTChangeHandler(value, index)}
+                    schemas={schemaObjects} 
+                    deleteSchema={(index) => onDeleteSchema(index)} 
+                    setActiveSchema={(index) => setActiveSchema(schemaObjects[index])}/>
                     
-
 
                 </SplitterPanel>
                 <SplitterPanel>
-                    <RightPanel  jsonData={finalJsonOutput(definitions, jsonData)} />
+                    {/* <RightPanel  jsonData={finalJsonOutput(definitions, jsonData)} /> */}
+                    <RightPanel jsonData={activeSchema?.jsonData ?? {}}/>
                 </SplitterPanel>
             </Splitter>
 

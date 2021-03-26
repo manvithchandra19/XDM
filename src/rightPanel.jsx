@@ -11,6 +11,7 @@ import Button from '@material-ui/core/Button';
 
 const RightPanel = (props) => {
 
+    console.log('RIGHTPANEL', props)
     const [jsonData, setJsonData] = useState({});
     const [schemaName, setschemaName] = useState('');
     const [definitions, setDefinitions] = useState(getDefaultDefinitions());
@@ -63,6 +64,7 @@ const RightPanel = (props) => {
     };
 
     useEffect(() => {
+        // console.log('RIGHTPANEL', props.jsonData)
         const copy = JSON.parse(JSON.stringify(props.jsonData));
         setJsonData(copy)
     }, [props.jsonData])

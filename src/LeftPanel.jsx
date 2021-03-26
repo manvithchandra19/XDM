@@ -103,7 +103,9 @@ const LeftPanel = (props) => {
         clazzName: clazzName,
         definition : definitions
     };
+
     const handleInputChange = (e, changingProp, objKey) => {
+        console.log('HANDLEINPUTCHANTE',e)
         const { name, value } = e.target;
         console.log(e.target.name);
         const newDefinitions = updateValue(definitions, objKey, changingProp, value);
@@ -214,7 +216,7 @@ const getLabelNamesClass = () => {
             </div>
         )
     }
-    console.log('LEFTPANEL', props.schemas)
+
 
     return (
         <div>
@@ -227,7 +229,12 @@ const getLabelNamesClass = () => {
                         <div onClick={() => props.deleteSchema(index)}></div>
                         
                         <div className={classes.root}>
-                        <TextField label={labelSchemaName} variant="filled" value={schemaName} onChange={(e) => setschemaName(e.target.value)} />
+
+                            {console.log('OBJ', obj.jsonData)}
+
+                        <TextField label="JRTEST" variant="filled" defaultValue={obj.jsonData.key} onChange={(e) => props.onJRTESTChange(e.target.value, index)}/>
+
+                        {/* <TextField label={labelSchemaName} variant="filled" value={schemaName} onChange={(e) => setschemaName(e.target.value)} />
                         <TextField label={labelSchematitle} variant="filled" value={schemaTitle} onChange={(e) => setTitleMain(e.target.value)} />
                         <TextField label={labelschemaDescription} variant="filled" value={schemadescription} onChange={(e) => setDescription(e.target.value)} />
                         {labelSchemaName === "Class Name" ? <div className="dropdown-demo" style  = {{marginLeft : 10}}>
@@ -237,7 +244,7 @@ const getLabelNamesClass = () => {
                         {labelSchemaName === "Mixin Name" ? <div className="dropdown-demo" style  = {{marginLeft : 10}}>
                         <Dropdown value={className} options={classess} onChange={onClassChange} optionLabel="name" placeholder="Class Name" />
                         <br/><br/>
-                        </div> : null}
+                        </div> : null} */}
 
 
                         </div>
