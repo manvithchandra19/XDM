@@ -36,23 +36,6 @@ import RightPanel from "./rightPanel";
 
 const { createPullRequest } = require("octokit-plugin-create-pull-request");
 
-const EditorDemo = () => {
-    const [text1, setText1] = useState('<div>{JSON.stringify(finalJsonOutput(definitions, jsonData), undefined, 4)}</div>');
-    const [text2, setText2] = useState('');
-
-    const renderHeader = () => {
-        return (
-            <span className="ql-formats">
-                <button className="ql-bold" aria-label="Bold"></button>
-                <button className="ql-italic" aria-label="Italic"></button>
-                <button className="ql-underline" aria-label="Underline"></button>
-            </span>
-        );
-    }
-
-    const header = renderHeader();
-}
-
 const onSave = (val) => {
     console.log('Edited Value -> ', val)
   }
@@ -286,7 +269,8 @@ const Schema = () => {
     }
 
 
-    const getLabelNamesClass = () => {
+    
+const getLabelNamesClass = () => {
         setlabelSchemaDescription('Class Description');
         setlabelSchemaName('Class Name');
         setlabelSchemaTitle('Class Title');
@@ -296,7 +280,6 @@ const Schema = () => {
         setmixincolor('');
         setdatatypecolor('');
     }
-
 
     const getLabelNamesDataType = () => {
         setlabelSchemaDescription('Datatype Description');
@@ -324,14 +307,14 @@ const Schema = () => {
                      
                             <Splitter style={{ height: '100%'}} className="p-mb-5">
                                 <SplitterPanel  className="p-d-flex p-ai-center p-jc-center" size={1    } minSize={1} style= {{backgroundColor: 'lightgray'}}><div style = {{width:100}}>
-                                                        <Button variant="contained" color={classColor} className={classes.button} onClick={getLabelNamesClass}>
-                                                            Class
+                                <Button variant="contained" color={classColor} className={classes.button} onClick={getLabelNamesClass}>
+                                    Class
                                 </Button><br />
-                                                        <Button variant="contained" color={mixinColor} className={classes.button} onClick={getLabelNamesMixin}>
-                                                            Mixin
+                                <Button variant="contained" color={mixinColor} className={classes.button} onClick={getLabelNamesMixin}>
+                                    Mixin
                                 </Button><br />
-                                                        <Button variant="contained" color={datatypeColor} className={classes.button} onClick={getLabelNamesDataType}>
-                                                            Datatype
+                                <Button variant="contained" color={datatypeColor} className={classes.button} onClick={getLabelNamesDataType}>
+                                    Datatype
                                 </Button><br />
                         </div>
                             </SplitterPanel>
