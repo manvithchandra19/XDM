@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import JSONInput from 'react-json-editor-ajrm'
-import locale    from 'react-json-editor-ajrm/locale/en';
+import locale from 'react-json-editor-ajrm/locale/en';
 import { Octokit } from "@octokit/core";
 import { addPropertyHandler, finalJsonOutput, getDefaultDefinitions, getDefaultJson, initialObject, plusHandler, updateValue, deleteProp } from "./xdm2";
 import TextField from "@material-ui/core/TextField";
@@ -69,21 +69,21 @@ const RightPanel = (props) => {
         setJsonData(copy)
     }, [props.jsonData])
 
-    return (<div style={{display: 'flex', flexDirection: 'column', width: '100%', margin: '5px'}}>
-        <div style={{height: '100px', align: 'center' }}>
-            
-            
-            <TextField id="outlined-basic" label="PR Title" variant="outlined" value={prTitle} onChange={(e) => setPrTitle(e.target.value)}/>
+    return (<div style={{ display: 'flex', flexDirection: 'column', width: '100%', margin: '5px' }}>
+        <div style={{ height: '100px', align: 'center' }}>
+
+
+            <TextField id="outlined-basic" label="PR Title" variant="outlined" value={prTitle} onChange={(e) => setPrTitle(e.target.value)} />
             &nbsp;
-            <TextField  id="outlined-basic" label="PR Description" variant="outlined" value={prBody} onChange={(e) => setPrBody(e.target.value)}/>
+            <TextField id="outlined-basic" label="PR Description" variant="outlined" value={prBody} onChange={(e) => setPrBody(e.target.value)} />
             &nbsp;
-            <TextField  id="outlined-basic" label="PR Branch" variant="outlined" value={prBranch} onChange={(e) => setPrBranch(e.target.value)}/>
+            <TextField id="outlined-basic" label="PR Branch" variant="outlined" value={prBranch} onChange={(e) => setPrBranch(e.target.value)} />
             &nbsp;
-            <TextField   id="outlined-basic" label="Username" variant="outlined" value={prUsername} onChange={(e) => setPrUsername(e.target.value)}/>
+            <TextField id="outlined-basic" label="Username" variant="outlined" value={prUsername} onChange={(e) => setPrUsername(e.target.value)} />
             &nbsp;
-            <Button variant="contained"   onClick={() => { createPR(); }}>Create PR</Button>
-            
-        
+            <Button variant="contained" onClick={() => { createPR(); }}>Create PR</Button>
+
+
         </div>
         <JSONInput
             id="panel1"
@@ -98,7 +98,7 @@ const RightPanel = (props) => {
             }}
             height="100%"
         />
-        
+
     </div>)
 }
 

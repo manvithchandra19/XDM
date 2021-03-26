@@ -16,7 +16,7 @@ import IconButton from '@material-ui/core/IconButton';
 import AddIcon from '@material-ui/icons/Add';
 import TextField from "@material-ui/core/TextField";
 import DeleteIcon from '@material-ui/icons/Delete';
-import { addPropertyHandler, finalJsonOutput, getDefaultDefinitions, getDefaultJson, initialObject, plusHandler, updateValue, deleteProp } from "./xdm2";
+import { addPropertyHandler, finalJsonOutput, getDefaultDefinitions, getDefaultJson, initialObject, plusHandler, updateValue, deleteProp, getFirstValueFromMap } from "./xdm2";
 
 
 
@@ -61,7 +61,7 @@ const Schema2 = () => {
 
     const [_schemaType, setschemaType] = useState('Class')
     const [schemaName, setschemaName] = useState('');
-    const [schemaTitle, setTitleMain] = useState('');
+    const [schemaTitle, setschemaTitle] = useState('');
     const [schemadescription, setDescription] = useState('');
     const [metaStatus, setmetastatus] = useState('');
     const [behaviour, setbehaviour] = useState('');
@@ -76,6 +76,9 @@ const Schema2 = () => {
     const [datatypeColor, setdatatypecolor] = useState('');
     const [definitions, setDefinitions] = useState(getDefaultDefinitions());
     
+    const [error , setError] = useState(false)
+    const [ errorMsg , seterrorMsg] = useState('')
+ 
     const [className, setClassName] = useState("");
     const [mixinBehaviour, setMixinBehaviour] = useState('');
     
@@ -111,9 +114,23 @@ const Schema2 = () => {
     };
     const handleInputChange = (e, changingProp, objKey) => {
         const { name, value } = e.target;
-        console.log(e.target.name);
+        // console.log(e.target.name);
         const newDefinitions = updateValue(definitions, objKey, changingProp, value);
         setDefinitions({ "CLAZZ": newDefinitions.CLAZZ });
+        // console.log("defi",definitions);
+        const activeSchemaCopy = JSON.parse(JSON.stringify(activeSchema));
+        const schemaObjectsCopy = JSON.parse(JSON.stringify(schemaObjects));
+// console.log(activeSchemaCopy.jsonData.definition);\
+
+let properties = getFirstValueFromMap(activeSchemaCopy.jsonData.definition)
+// console.log(getFirstValueFromMap(activeSchemaCopy.jsonData.definition));
+properties = definitions.CLAZZ.properties
+        activeSchemaCopy.jsonData.definition = properties
+        console.log(activeSchemaCopy.jsonData.definition);
+        schemaObjectsCopy[objKey].jsonData.definition = properties
+        setActiveSchema(activeSchemaCopy);
+        setSchemaObjects(schemaObjectsCopy);
+
     };
 
     const handlePlusChange = (e, objKey) => {
@@ -135,9 +152,17 @@ const Schema2 = () => {
     }
 
     const addDynamicPropertyRow = () => {
+        if(schemaName === ""){
+            seterrorMsg('Please enter Class Name')
+            setError(true)
+        }else{
+            seterrorMsg('')
+            setError(false)
         console.log("clicked add properties");
         const newDefinitions = addPropertyHandler(definitions);
         setDefinitions({ "CLAZZ": newDefinitions.CLAZZ });
+        }
+        
     }
 
     const deleteProperty = (jsonObject, i) => {
@@ -179,8 +204,8 @@ const Schema2 = () => {
 
     // dummy state
     const [schemaObjects, setSchemaObjects] = useState([
-        {type: 'class', jsonData: {key: 'CLASS', someOtherKey: 'VALUE'}},
-        {type: 'mixin', jsonData: {key: 'MIXIN', someOtherKey: 'VALUE2'}},
+        {type: 'class', jsonData: finalJsonOutput(definitions,jsonData)},
+        // {type: 'mixin', jsonData: {key: 'MIXIN', someOtherKey: 'VALUE2'}},
         // {type: 'datatype', jsonData: {key: 'DATATYPE', someOtherKey: 'VALUE3'}}
     ])
 
@@ -191,17 +216,50 @@ const Schema2 = () => {
     }
 
 
-    const onJRTESTChangeHandler = (value, index) => {
+    const onJRTESTChangeHandler = (e, index) => {
         // console.log('ACTIVESCHEMA', activeSchema);
         // make copies of state
+        // const {name,value} = e.target
+        console.log("name",e.name);
         const activeSchemaCopy = JSON.parse(JSON.stringify(activeSchema));
         const schemaObjectsCopy = JSON.parse(JSON.stringify(schemaObjects));
 
+        // const activeSchemaName = JSON.parse(JSON.stringify(activeSchema));
+        // const activeSchematitle = JSON.parse(JSON.stringify(activeSchema));
+        // const activeSchemaDescription = JSON.parse(JSON.stringify(activeSchema));
+        
+        console.log(activeSchemaCopy.jsonData);
+        switch (e.name) {
+            case "schemaName":
+                setschemaName(e.value);
+                activeSchemaCopy.jsonData.$id = `https://ns.adobe.com/xdm/Class/${e.value}`
+                schemaObjectsCopy[index].jsonData.$id = `https://ns.adobe.com/xdm/Class/${e.value}`;
+                activeSchemaCopy.jsonData.definition = {[e.value]: {
+                    "properties" : {}
+                }};
+                schemaObjectsCopy[index].jsonData.definition = {[e.value]: {
+                    "properties" : {}
+                }};
+                activeSchemaCopy.jsonData.allOf = [{'$ref':`#/definitions/${e.value}`}];
+                schemaObjectsCopy[index].jsonData.allOf =[{'$ref':`#/definitions/${e.value}`}];
+                
+                break;
+                case "schemaTitle":
+                    setschemaTitle(e.value);
+                    activeSchemaCopy.jsonData.title = e.value
+                    schemaObjectsCopy[index].jsonData.title = e.value;
+                    break;
+            case "schemaDescription":
+                setDescription(e.value);
+                activeSchemaCopy.jsonData.description = e.value
+                schemaObjectsCopy[index].jsonData.description = e.value;
+                break;
+                
+        }
         // change values
-        activeSchemaCopy.jsonData.key = value;
-        schemaObjectsCopy[index].jsonData.key = value;
-
-        // console.log('COPY', activeSchemaCopy)
+        
+        console.log('COPY', activeSchemaCopy);
+        console.log('activeSchema', activeSchema)
         
         setActiveSchema(activeSchemaCopy);
         setSchemaObjects(schemaObjectsCopy);
@@ -228,12 +286,12 @@ const Schema2 = () => {
                         <br />
                         </div>
                 <div>
-                    <Button variant="contained" color={classColor} className={classes.button} onClick={getLabelNamesMixin}>
+                    <Button variant="contained" color={mixinColor} className={classes.button} onClick={getLabelNamesMixin}>
                         Mixin </Button>
                         <br />
                         </div>
                 <div>
-                    <Button variant="contained" color={classColor} className={classes.button} onClick={getLabelNamesDataType}>
+                    <Button variant="contained" color={datatypeColor} className={classes.button} onClick={getLabelNamesDataType}>
                         Datatype</Button>
                         <br />
                         </div>
@@ -243,11 +301,24 @@ const Schema2 = () => {
             <Splitter style={{height: '100%', width: '100%'}} layout="horizontal">
                 <SplitterPanel >
                     <LeftPanel 
-                    onJRTESTChange={(value, index) => onJRTESTChangeHandler(value, index)}
+                    onJRTESTChange={(e, index) => onJRTESTChangeHandler(e, index)}
                     schemas={schemaObjects} 
                     deleteSchema={(index) => onDeleteSchema(index)} 
+                    labelSchemaName = {labelSchemaName}
+                    labelSchematitle = {labelSchematitle}
+                    labelschemaDescription = {labelschemaDescription}
+                    schemaDescription = {schemadescription}
+                    schemaName = {schemaName}
+                    schemaTitle = {schemaTitle}
+                    updateHandlerFactory = {updateHandlerFactory}
+                    addDynamicPropertyRow = {addDynamicPropertyRow}
+                    definitions = {definitions}
+                    plusHandlerFactory = {plusHandlerFactory}
+                    deleteProperty = {deleteProperty}
+                    error = {error}
+                    errorMsg = {errorMsg}
                     setActiveSchema={(index) => setActiveSchema(schemaObjects[index])}/>
-                    
+                   
 
                 </SplitterPanel>
                 <SplitterPanel>
