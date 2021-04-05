@@ -316,7 +316,7 @@ const LeftPanel = (props) => {
                                 label="Class Name" 
                                 variant="filled" 
                                 defaultValue={obj.jsonData.key} 
-                                onChange={(e) => console.log(e)}/>
+                                onChange={(e) => props.onJRTESTChange(e, index)}/>
 
                             <TextField 
                                 label="Class Name" 

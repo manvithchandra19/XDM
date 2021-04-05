@@ -187,7 +187,7 @@ const Schema2 = () => {
 
     // dummy state
     const [schemaObjects, setSchemaObjects] = useState([
-        // {type: 'class', minimized: false, jsonData: {key: 'CLASS', someOtherKey: 'VALUE',}},
+        // {type: 'class', minimized: false, jsonData: {key: 'CLASS', someOtherKey: 'VALUE'}},
         // {type: 'mixin', minimized: false,jsonData: {key: 'MIXIN', someOtherKey: 'VALUE2'}},
         // {type: 'datatype', minimized: false,jsonData: {key: 'DATA TYPE', someOtherKey: 'VALUE2'}},
     ])
@@ -219,8 +219,6 @@ const Schema2 = () => {
         setActiveSchema(activeSchemaCopy);
         setSchemaObjects(schemaObjectsCopy);
 
-        // console.log('VALUE', value, index)
-
     }
 
     const onWindowAction = (isMinimized, index) => {
@@ -240,7 +238,9 @@ const Schema2 = () => {
         let schemaObjectsCP = JSON.parse(JSON.stringify(schemaObjects));
         switch (type) {
             case 'class':
-                const classSchema = {type: 'class', minimized: false, jsonData: {key: 'CLASS', someOtherKey: 'VALUE'}};
+                const classSchema = {type: 'class', minimized: false, jsonData: 
+                    {key: 'CLASS', someOtherKey: 'VALUE'}
+                };
                 setActiveSchema(classSchema)
                 schemaObjectsCP.push(classSchema);
                 setSchemaObjects(schemaObjectsCP);
