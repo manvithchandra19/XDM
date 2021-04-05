@@ -20,6 +20,23 @@ import DeleteOutline from "@spectrum-icons/workflow/DeleteOutline";
 import Minimize from "@spectrum-icons/workflow/Minimize";
 import Maximize from "@spectrum-icons/workflow/Maximize";
 
+const baseObject = {
+    "meta:license": [
+    "Copyright 2020 Adobe Systems Incorporated. All rights reserved.",
+    "This work is licensed under a Creative Commons Attribution 4.0 International (CC BY 4.0) license",
+    "you may not use this file except in compliance with the License. You may obtain a copy",
+    "of the License at https://creativecommons.org/licenses/by/4.0/"
+    ],
+    "$id": "https://ns.adobe.com/xdm/classes/${ CLASSNAME / MIXINNAME / DATATYPENAME / SCHEMA}",
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "title": "${ CLASSTITLE / MIXINTTILE / DATATYPETITLE / SCHEMA }",
+    "type": "object",
+    
+    "meta:extensible": true, // ALL ARE TRUE EXCEPT WHEN USER SELECTS SCHEMA
+    "meta:abstract": true, // ALL ARE TRUE EXCEPT SELECTS SCHEMA
+
+}
+
 const useStyles = makeStyles((theme) => ({
     root: {
         flexGrow: 1,
