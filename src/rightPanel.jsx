@@ -3,15 +3,23 @@ import JSONInput from 'react-json-editor-ajrm'
 import locale    from 'react-json-editor-ajrm/locale/en';
 import { Octokit } from "@octokit/core";
 import { addPropertyHandler, finalJsonOutput, getDefaultDefinitions, getDefaultJson, initialObject, plusHandler, updateValue, deleteProp } from "./xdm2";
-import TextField from "@material-ui/core/TextField";
-import Button from '@material-ui/core/Button';
+// import TextField from "@material-ui/core/TextField";
+import { ActionButton, Button } from '@react-spectrum/button';
+import { AlertDialog, Dialog, DialogTrigger } from '@react-spectrum/dialog';
+import { Heading } from '@react-spectrum/text';
+import { Flex } from '@react-spectrum/layout';
+import { Link } from '@react-spectrum/link';
+import { Header, Divider, Content, Form, Footer, Checkbox, ButtonGroup, Text, TextField} from '@adobe/react-spectrum'
+import Alias from '@spectrum-icons/workflow/Alias';
+// import Button from '@material-ui/core/Button';
+// import { Button } from '@react-spectrum';
 // import {useDialogContainer} from '@adobe/react-spectrum';
 
 
 
 const RightPanel = (props) => {
 
-    console.log('RIGHTPANEL', props)
+    // console.log('RIGHTPANEL', props)
     const [jsonData, setJsonData] = useState({});
     const [schemaName, setschemaName] = useState('');
     const [definitions, setDefinitions] = useState(getDefaultDefinitions());
@@ -64,16 +72,55 @@ const RightPanel = (props) => {
     };
 
     useEffect(() => {
-        // console.log('RIGHTPANEL', props.jsonData)
+        if (props.jsonData) {
+            // console.log('RIGHTPANEL', props.jsonData)
         const copy = JSON.parse(JSON.stringify(props.jsonData));
         setJsonData(copy)
+        } else {
+            setJsonData(undefined)
+        }
     }, [props.jsonData])
 
     return (<div style={{display: 'flex', flexDirection: 'column', width: '100%', margin: '5px'}}>
-        <div style={{height: '100px', align: 'center' }}>
+        <div style={{position: 'absolute', right: '30px', bottom: '10px', margin: '10px', zIndex: '10'}}>
             
-            
-            <TextField id="outlined-basic" label="PR Title" variant="outlined" value={prTitle} onChange={(e) => setPrTitle(e.target.value)}/>
+            <DialogTrigger>
+                <ActionButton width="size-100"><Alias></Alias></ActionButton>
+                {(close) => (
+                    <Dialog>
+                    <Heading>
+                        <Flex alignItems="center" gap="size-100">
+                        {/* <Book size="S" /> */}
+                        <Text>Create a Pull Request</Text>
+                        </Flex>
+                    </Heading>
+
+                    <Divider />
+                    <Content>
+                        <Form>
+                        <TextField label="Title" placeholder="Pull Request Title" autoFocus />
+                        <TextField label="Description" placeholder="Pull Request Description" />
+                        <TextField label="Branch" placeholder="main" />
+                        <TextField label="Username" placeholder="mprabhak@adobe.com" />
+                        </Form>
+                    </Content>
+                    <Footer>
+                        {/* <Checkbox>
+                        I want to receive updates for exclusive offers in my area.
+                        </Checkbox> */}
+                    </Footer>
+                    <ButtonGroup>
+                        <Button variant="secondary" onPress={close}>
+                        Cancel
+                        </Button>
+                        <Button variant="cta" onPress={close}>
+                        Create
+                        </Button>
+                    </ButtonGroup>
+                    </Dialog>
+                )}
+            </DialogTrigger>
+            {/* <TextField id="outlined-basic" label="PR Title" variant="outlined" value={prTitle} onChange={(e) => setPrTitle(e.target.value)}/>
             &nbsp;
             <TextField  id="outlined-basic" label="PR Description" variant="outlined" value={prBody} onChange={(e) => setPrBody(e.target.value)}/>
             &nbsp;
@@ -82,12 +129,12 @@ const RightPanel = (props) => {
             <TextField   id="outlined-basic" label="Username" variant="outlined" value={prUsername} onChange={(e) => setPrUsername(e.target.value)}/>
             &nbsp;
             <Button variant="contained"   onClick={() => { createPR(); }}>Create PR</Button>
-            
+             */}
         
         </div>
         <JSONInput
             id="panel1"
-            placeholder={jsonData} // data to display
+            placeholder={jsonData ?? {}} // data to display
             locale={locale}
             confirmGood={false}
             reset={true}
