@@ -7,51 +7,8 @@ import 'primeicons/primeicons.css';
 import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.css';
 import 'bootstrap/dist/css/bootstrap.css';
-import Grid from '@material-ui/core/Grid';
-import Divider from '@material-ui/core/Divider';
-import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import Fab from '@material-ui/core/Fab';
-import IconButton from '@material-ui/core/IconButton';
-import AddIcon from '@material-ui/icons/Add';
-import TextField from "@material-ui/core/TextField";
-import DeleteIcon from '@material-ui/icons/Delete';
-import { addPropertyHandler, finalJsonOutput, getDefaultDefinitions, getDefaultJson, initialObject, plusHandler, updateValue, deleteProp } from "./xdm2";
+import { addPropertyHandler, finalJsonOutput, getDefaultDefinitions, getDefaultJson, initialObject, plusHandler, updateValue, deleteProp,getFirstValueFromMap } from "./xdm2";
 import { ActionButton } from '@react-spectrum/button';
-
-
-
-// const useStyles = makeStyles((theme) => ({
-//     root: {
-//         flexGrow: 1,
-//         "& .MuiTextField-root": {
-//             margin: theme.spacing(1),
-//             width: 167
-//         }
-//     },
-//     paper: {
-//         padding: theme.spacing(2),
-//         textAlign: 'center',
-//         color: theme.palette.text.secondary,
-//     },
-
-//     button: {
-//         margin: theme.spacing.unit,
-//         width: 80,
-//     },
-//     input: {
-//         // display: 'none',
-//         height: 28
-//     },
-
-//     formControl: {
-//         margin: theme.spacing(1),
-//         minWidth: 140,
-//     },
-//     selectEmpty: {
-//         marginTop: theme.spacing(2),
-//     },
-// }));
 
 // MAIN COMPONENT
 const Schema2 = () => {
@@ -62,127 +19,84 @@ const Schema2 = () => {
         {type: 'mixin', label: 'Add Mixin', style: {background: '#B582A3'}},
         {type: 'dataType', label: 'Add DT', style: {background: '#D66D6C'}}
     ];
-
-    // const classes = useStyles();
-
-    // const [_schemaType, setschemaType] = useState('Class')
-    // const [schemaName, setschemaName] = useState('');
-    // const [schemaTitle, setTitleMain] = useState('');
-    // const [schemadescription, setDescription] = useState('');
-    // const [metaStatus, setmetastatus] = useState('');
-    // const [behaviour, setbehaviour] = useState('');
-    // const [clazzName, setClazzName] = useState('')
-
-    // const [labelSchemaName, setlabelSchemaName] = useState('Class Name');
-    // const [labelSchematitle, setlabelSchemaTitle] = useState('Class Title');
-    // const [labelschemaDescription, setlabelSchemaDescription] = useState('Class Description');
-    // const [labelBehaviour, setlabelBehaviour] = useState('Behaviour');
-    // const [classColor, setclasscolor] = useState('primary');
-    // const [mixinColor, setmixincolor] = useState('');
-    // const [datatypeColor, setdatatypecolor] = useState('');
-    // const [definitions, setDefinitions] = useState(getDefaultDefinitions());
     
-    // const [className, setClassName] = useState("");
-    // const [mixinBehaviour, setMixinBehaviour] = useState('');
+    const [_schemaType, setschemaType] = useState('Class')
+    const [schemaName, setschemaName] = useState('');
+    const [schemaTitle, setschemaTitle] = useState('');
+    const [schemadescription, setDescription] = useState('');
+    const [metaStatus, setmetastatus] = useState('');
+    const [behaviour, setbehaviour] = useState('');
+    const [clazzName, setClazzName] = useState('')
+
+    const [labelSchemaName, setlabelSchemaName] = useState('Class Name');
+    const [labelSchematitle, setlabelSchemaTitle] = useState('Class Title');
+    const [labelschemaDescription, setlabelSchemaDescription] = useState('Class Description');
+    const [labelBehaviour, setlabelBehaviour] = useState('Behaviour');
+    const [definitions, setDefinitions] = useState(getDefaultDefinitions());
     
-    // const classess = [
-    //     { name: 'profile'},
-    //     { name: 'experience event' },
-    //     {name : 'product'}
-    // ];
+    const jsonData = {
+        schemaType: _schemaType,
+        schemaName: schemaName,
+        title: schemaTitle,
+        description: schemadescription,
+        metaStatus: metaStatus,
+        behaviour: behaviour,
+        clazzName: clazzName,
+        definition : definitions
+    };
 
-    // const behaviourVal = [
-    //     { name: 'record'},
-    //     { name: 'timeseries' }
-    // ];
+    const handleInputChange = (e, changingProp, objKey) => {
+        console.log("AASSSSS",e);
+        const newDefinitions = updateValue(definitions, objKey, changingProp, e);
+        setDefinitions({ "CLAZZ": newDefinitions.CLAZZ });
+        console.log("DEFINATION", definitions);
+        const activeSchemaCopy = JSON.parse(JSON.stringify(activeSchema));
+        const schemaObjectsCopy = JSON.parse(JSON.stringify(schemaObjects));
+        var keyobj = objKey.toString(); 
+        if (keyobj.includes(".")){
+            const keysArr = objKey.split("."); 
+            activeSchemaCopy.jsonData.definition = definitions
+            console.log(activeSchemaCopy.jsonData.definition);
+            schemaObjectsCopy[keysArr[0]].jsonData.definition = definitions
+        }else{
+            activeSchemaCopy.jsonData.definition = definitions
+            console.log(activeSchemaCopy.jsonData.definition);
+            schemaObjectsCopy[objKey].jsonData.definition = definitions
+        }
+      
+        setActiveSchema(activeSchemaCopy);
+        setSchemaObjects(schemaObjectsCopy);
+    };
 
-    // const onClassChange = (e) => {
-    //     console.log(e.value.name);
-    //     setClassName(e.value);
-    //     setbehaviour(e.value.name)
-    // }
+    const handlePlusChange = (e, objKey) => {
+        console.log(e.target.name);
+        const newDefinitions = plusHandler(definitions, objKey);
+        setDefinitions({ "CLAZZ": newDefinitions.CLAZZ });
+    };
 
-    // const onmixinChange = (e) => {
-    //     setMixinBehaviour(e.value);
-    //     setbehaviour(e.value.name)
-    // }
-    // const jsonData = {
-    //     schemaType: _schemaType,
-    //     schemaName: schemaName,
-    //     title: schemaTitle,
-    //     description: schemadescription,
-    //     metaStatus: metaStatus,
-    //     behaviour: behaviour,
-    //     clazzName: clazzName,
-    //     definition : definitions
-    // };
+    const updateHandlerFactory = (changingProp, objKey) => {
+        return (e) => {
+            handleInputChange(e, changingProp, objKey);
+        }
+    }
 
-    // const handleInputChange = (e, changingProp, objKey) => {
-    //     const { name, value } = e.target;
-    //     console.log(e.target.name);
-    //     const newDefinitions = updateValue(definitions, objKey, changingProp, value);
-    //     setDefinitions({ "CLAZZ": newDefinitions.CLAZZ });
-    // };
+    const plusHandlerFactory = (objKey) => {
+        return (e) => {
+            handlePlusChange(e, objKey);
+        }
+    }
 
-    // const handlePlusChange = (e, objKey) => {
-    //     console.log(e.target.name);
-    //     const newDefinitions = plusHandler(definitions, objKey);
-    //     setDefinitions({ "CLAZZ": newDefinitions.CLAZZ });
-    // };
+    const addDynamicPropertyRow = () => {
+        console.log("clicked add properties");
+        const newDefinitions = addPropertyHandler(definitions);
+        setDefinitions({ "CLAZZ": newDefinitions.CLAZZ });
+    }
 
-    // const updateHandlerFactory = (changingProp, objKey) => {
-    //     return (e) => {
-    //         handleInputChange(e, changingProp, objKey);
-    //     }
-    // }
-
-    // const plusHandlerFactory = (objKey) => {
-    //     return (e) => {
-    //         handlePlusChange(e, objKey);
-    //     }
-    // }
-
-    // const addDynamicPropertyRow = () => {
-    //     console.log("clicked add properties");
-    //     const newDefinitions = addPropertyHandler(definitions);
-    //     setDefinitions({ "CLAZZ": newDefinitions.CLAZZ });
-    // }
-
-    // const deleteProperty = (jsonObject, i) => {
-    //     const result = deleteProp(jsonObject, i);
-    //     setDefinitions({ "CLAZZ": result.CLAZZ })
-    // }
+    const deleteProperty = (jsonObject, i) => {
+        const result = deleteProp(jsonObject, i);
+        setDefinitions({ "CLAZZ": result.CLAZZ })
+    }
     
-    // const getLabelNamesClass = () => {
-    //     setlabelSchemaDescription('Class Description');
-    //     setlabelSchemaName('Class Name');
-    //     setlabelSchemaTitle('Class Title');
-    //     setlabelBehaviour('Behaviour')
-    //     setschemaType('Class')
-    //     setclasscolor('primary')
-    //     setmixincolor('');
-    //     setdatatypecolor('');
-    // }
-    // const getLabelNamesMixin = () => {
-    //     setlabelSchemaDescription('Mixin Description');
-    //     setlabelSchemaName('Mixin Name');
-    //     setlabelSchemaTitle('Mixin Title');
-    //     setlabelBehaviour('Class Name');
-    //     setschemaType('Mixin')
-    //     setclasscolor('');
-    //     setmixincolor('primary')
-    //     setdatatypecolor('');
-    // }
-    // const getLabelNamesDataType = () => {
-    //     setlabelSchemaDescription('Datatype Description');
-    //     setlabelSchemaName('Datatype Name');
-    //     setlabelSchemaTitle('Datatype Title');
-    //     setschemaType('DataType')
-    //     setclasscolor('');
-    //     setmixincolor('');
-    //     setdatatypecolor('primary');
-    // }
-
 
 
     // dummy state
@@ -204,17 +118,43 @@ const Schema2 = () => {
      }
 
 
-    const onJRTESTChangeHandler = (value, index) => {
-        // console.log('ACTIVESCHEMA', activeSchema);
-        // make copies of state
+    const onJRTESTChangeHandler = (e,index,name) => {
+        console.log("name",e);
         const activeSchemaCopy = JSON.parse(JSON.stringify(activeSchema));
         const schemaObjectsCopy = JSON.parse(JSON.stringify(schemaObjects));
-
+        console.log(activeSchemaCopy.jsonData);
+        switch (name) {
+            case "schemaName":
+                setschemaName(e);
+                activeSchemaCopy.jsonData.$id = `https://ns.adobe.com/xdm/Class/${e}`
+                schemaObjectsCopy[index].jsonData.$id = `https://ns.adobe.com/xdm/Class/${e}`;
+                activeSchemaCopy.jsonData.definition = {[e]: {
+                    "properties" : {}
+                }};
+                schemaObjectsCopy[index].jsonData.definition = {[e]: {
+                    "properties" : {}
+                }};
+               
+                activeSchemaCopy.jsonData.allOf = [{'$ref':`#/definitions/${e}`}];
+                schemaObjectsCopy[index].jsonData.allOf =[{'$ref':`#/definitions/${e}`}];
+                
+                break;
+                case "schemaTitle":
+                    setschemaTitle(e);
+                    activeSchemaCopy.jsonData.title = e
+                    schemaObjectsCopy[index].jsonData.title = e;
+                    break;
+            case "schemaDescription":
+                setDescription(e);
+                activeSchemaCopy.jsonData.description = e
+                schemaObjectsCopy[index].jsonData.description = e;
+                break;
+                
+        }
         // change values
-        activeSchemaCopy.jsonData.key = value;
-        schemaObjectsCopy[index].jsonData.key = value;
-
-        // console.log('COPY', activeSchemaCopy)
+        
+        console.log('COPY', activeSchemaCopy);
+        console.log('activeSchema', activeSchema)
         
         setActiveSchema(activeSchemaCopy);
         setSchemaObjects(schemaObjectsCopy);
@@ -239,23 +179,36 @@ const Schema2 = () => {
         switch (type) {
             case 'class':
                 const classSchema = {type: 'class', minimized: false, jsonData: 
-                    {key: 'CLASS', someOtherKey: 'VALUE'}
+                finalJsonOutput(definitions,jsonData)
                 };
                 setActiveSchema(classSchema)
                 schemaObjectsCP.push(classSchema);
+                setschemaType("Class")
                 setSchemaObjects(schemaObjectsCP);
+                setlabelSchemaDescription('Class Description');
+                setlabelSchemaName('Class Name');
+                setlabelSchemaTitle('Class Title');
+                setlabelBehaviour('Behaviour')
                 break;
             case 'mixin':
-                const mixinSchema = {type: 'mixin', minimized: false, jsonData: {key: 'MIXIN', someOtherKey: 'VALUE'}};
+                const mixinSchema = {type: 'mixin', minimized: false, jsonData: finalJsonOutput(definitions,jsonData)};
                 setActiveSchema(mixinSchema)
                 schemaObjectsCP.push(mixinSchema);
                 setSchemaObjects(schemaObjectsCP);
+                setschemaType("Mixin")
+                setlabelSchemaDescription('Mixin Description');
+        setlabelSchemaName('Mixin Name');
+        setlabelSchemaTitle('Mixin Title');
+        setlabelBehaviour('Class Name');
                 break;
             case 'dataType':
-                const dataTypeSchema = {type: 'dataType', minimized: false, jsonData: {key: 'DATATYPE', someOtherKey: 'VALUE'}};
+                const dataTypeSchema = {type: 'dataType', minimized: false, jsonData: finalJsonOutput(definitions,jsonData)};
                 setActiveSchema(dataTypeSchema)
                 schemaObjectsCP.push(dataTypeSchema);
                 setSchemaObjects(schemaObjectsCP);
+                setlabelSchemaDescription('Datatype Description');
+                setlabelSchemaName('Datatype Name');
+                setlabelSchemaTitle('Datatype Title');
                 break;
             default:
                 break;
@@ -289,9 +242,21 @@ const Schema2 = () => {
                 <SplitterPanel >
                     <LeftPanel 
                     onWindowAction={(type, index) => onWindowAction(type, index)}
-                    onJRTESTChange={(value, index) => onJRTESTChangeHandler(value, index)}
+                    onJRTESTChange={(e, index,name) => onJRTESTChangeHandler(e, index,name)}
                     schemas={schemaObjects} 
-                    deleteSchema={(index) => onDeleteSchema(index)} 
+                    deleteSchema={(index) => onDeleteSchema(index)}
+                    schemaDescription = {schemadescription}
+                    schemaName = {schemaName}
+                    schemaTitle = {schemaTitle}
+                    labelSchemaName = {labelSchemaName}
+                    behaviour = {behaviour}
+                    labelSchematitle = {labelSchematitle}
+                    labelschemaDescription = {labelschemaDescription}
+                    updateHandlerFactory = {updateHandlerFactory}
+                    addDynamicPropertyRow = {addDynamicPropertyRow}
+                    definitions = {definitions}
+                    plusHandlerFactory = {plusHandlerFactory}
+                    deleteProperty = {deleteProperty}
                     setActiveSchema={(index) => setActiveSchema(schemaObjects[index])}/>
                     
 
