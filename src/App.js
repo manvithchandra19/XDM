@@ -1,6 +1,6 @@
 import './App.css';
 import Schema2 from './Schema2';
-import Schema from './jsonBuilder'
+import ButtonType from './ButtonTypes'
 function App() {
   return (
   //  <Schema/>

@@ -9,6 +9,7 @@ import 'primereact/resources/primereact.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import { addPropertyHandler, finalJsonOutput, getDefaultDefinitions, getDefaultJson, initialObject, plusHandler, updateValue, deleteProp,getFirstValueFromMap } from "./xdm2";
 import { ActionButton } from '@react-spectrum/button';
+import ClassComponent from './ClassType';
 
 // MAIN COMPONENT
 const Schema2 = () => {
@@ -26,12 +27,18 @@ const Schema2 = () => {
     const [schemadescription, setDescription] = useState('');
     const [metaStatus, setmetastatus] = useState('');
     const [behaviour, setbehaviour] = useState('');
-    const [clazzName, setClazzName] = useState('')
+    const [clazzName, setClazzName] = useState('');
+
+    const [addClasses, setClasses] = useState([]);
+
+    const [onClickClassButton , setonClickClass] = useState(false);
 
     const [labelSchemaName, setlabelSchemaName] = useState('Class Name');
     const [labelSchematitle, setlabelSchemaTitle] = useState('Class Title');
     const [labelschemaDescription, setlabelSchemaDescription] = useState('Class Description');
     const [labelBehaviour, setlabelBehaviour] = useState('Behaviour');
+    // const [definitions, setDefinitions] = useState([getDefaultDefinitions()]);
+    
     const [definitions, setDefinitions] = useState(getDefaultDefinitions());
     
     const jsonData = {
@@ -66,12 +73,14 @@ const Schema2 = () => {
       
         setActiveSchema(activeSchemaCopy);
         setSchemaObjects(schemaObjectsCopy);
+        // setDefinitions(getDefaultDefinitions())
     };
 
     const handlePlusChange = (e, objKey) => {
         console.log(e.target.name);
         const newDefinitions = plusHandler(definitions, objKey);
-        setDefinitions({ "CLAZZ": newDefinitions.CLAZZ });
+        // setDefinitions([...definitions,{ }]);
+        setDefinitions({"CLAZZ": newDefinitions.CLAZZ} )
     };
 
     const updateHandlerFactory = (changingProp, objKey) => {
@@ -89,12 +98,15 @@ const Schema2 = () => {
     const addDynamicPropertyRow = () => {
         console.log("clicked add properties");
         const newDefinitions = addPropertyHandler(definitions);
-        setDefinitions({ "CLAZZ": newDefinitions.CLAZZ });
+        // setDefinitions([...definitions,{ "CLAZZ": newDefinitions.CLAZZ }]);
+        
+        setDefinitions({"CLAZZ": newDefinitions.CLAZZ} )
     }
 
     const deleteProperty = (jsonObject, i) => {
         const result = deleteProp(jsonObject, i);
-        setDefinitions({ "CLAZZ": result.CLAZZ })
+        // setDefinitions([...definitions,{ "CLAZZ": result.CLAZZ }]);
+        setDefinitions({"CLAZZ": newDefinitions.CLAZZ} )
     }
     
 
@@ -158,7 +170,20 @@ const Schema2 = () => {
         
         setActiveSchema(activeSchemaCopy);
         setSchemaObjects(schemaObjectsCopy);
+        setschemaName('')
+        setschemaTitle('')
+        setDescription('')
+        // setDefinitions(getDefaultDefini0tions()) 
+    }
 
+    const clearData = () => {
+        
+        const activeSchemaCopy = JSON.parse(JSON.stringify(activeSchema));
+        activeSchemaCopy.jsonData.$id = `https://ns.adobe.com/xdm/Class/`
+        activeSchemaCopy.jsonData.definition = {'': {
+            "properties" : {}
+        }};
+        setActiveSchema(activeSchemaCopy);
     }
 
     const onWindowAction = (isMinimized, index) => {
@@ -174,7 +199,7 @@ const Schema2 = () => {
         setSchemaObjects(schemaObjectsCopy);
     }
 
-    const onAddSchema = (type) => {
+    const onAddSchema = async (type) => {
         let schemaObjectsCP = JSON.parse(JSON.stringify(schemaObjects));
         switch (type) {
             case 'class':
@@ -184,31 +209,33 @@ const Schema2 = () => {
                 setActiveSchema(classSchema)
                 schemaObjectsCP.push(classSchema);
                 setschemaType("Class")
+                setClasses([...addClasses,addClasses.length])
                 setSchemaObjects(schemaObjectsCP);
-                setlabelSchemaDescription('Class Description');
-                setlabelSchemaName('Class Name');
-                setlabelSchemaTitle('Class Title');
-                setlabelBehaviour('Behaviour')
+               clearData()
+                // setlabelSchemaDescription('Class Description');
+                // setlabelSchemaName('Class Name');
+                // setlabelSchemaTitle('Class Title');
+                // setlabelBehaviour('Behaviour');
+                setonClickClass(true);
                 break;
             case 'mixin':
+                // await setDefinitions(getDefaultDefinitions())
+                console.log('JSONDATA',jsonData);
+                clearData()
                 const mixinSchema = {type: 'mixin', minimized: false, jsonData: finalJsonOutput(definitions,jsonData)};
                 setActiveSchema(mixinSchema)
                 schemaObjectsCP.push(mixinSchema);
                 setSchemaObjects(schemaObjectsCP);
-                setschemaType("Mixin")
-                setlabelSchemaDescription('Mixin Description');
-        setlabelSchemaName('Mixin Name');
-        setlabelSchemaTitle('Mixin Title');
-        setlabelBehaviour('Class Name');
                 break;
             case 'dataType':
                 const dataTypeSchema = {type: 'dataType', minimized: false, jsonData: finalJsonOutput(definitions,jsonData)};
                 setActiveSchema(dataTypeSchema)
                 schemaObjectsCP.push(dataTypeSchema);
                 setSchemaObjects(schemaObjectsCP);
-                setlabelSchemaDescription('Datatype Description');
-                setlabelSchemaName('Datatype Name');
-                setlabelSchemaTitle('Datatype Title');
+                setschemaName('')
+                setschemaTitle('')
+                setDescription('')
+                setDefinitions(getDefaultDefinitions())
                 break;
             default:
                 break;
@@ -240,25 +267,26 @@ const Schema2 = () => {
             {/* Left and Right Splitter Pane */}
             <Splitter style={{height: '100%', width: '100%'}} layout="horizontal">
                 <SplitterPanel >
-                    <LeftPanel 
-                    onWindowAction={(type, index) => onWindowAction(type, index)}
-                    onJRTESTChange={(e, index,name) => onJRTESTChangeHandler(e, index,name)}
-                    schemas={schemaObjects} 
-                    deleteSchema={(index) => onDeleteSchema(index)}
-                    schemaDescription = {schemadescription}
-                    schemaName = {schemaName}
-                    schemaTitle = {schemaTitle}
-                    labelSchemaName = {labelSchemaName}
-                    behaviour = {behaviour}
-                    labelSchematitle = {labelSchematitle}
-                    labelschemaDescription = {labelschemaDescription}
-                    updateHandlerFactory = {updateHandlerFactory}
-                    addDynamicPropertyRow = {addDynamicPropertyRow}
-                    definitions = {definitions}
-                    plusHandlerFactory = {plusHandlerFactory}
-                    deleteProperty = {deleteProperty}
-                    setActiveSchema={(index) => setActiveSchema(schemaObjects[index])}/>
-                    
+                    <LeftPanel   onWindowAction={(type, index) => onWindowAction(type, index)}
+                     onJRTESTChange={(e, index,name) => onJRTESTChangeHandler(e, index,name)}
+                     schemas={schemaObjects} 
+                     deleteSchema={(index) => onDeleteSchema(index)}
+                     schemaDescription = {schemadescription}
+                     schemaName = {schemaName}
+                     schemaTitle = {schemaTitle}
+                     labelSchemaName = {labelSchemaName}
+                     behaviour = {behaviour}
+                     labelSchematitle = {labelSchematitle}
+                     labelschemaDescription = {labelschemaDescription}
+                     updateHandlerFactory = {updateHandlerFactory}
+                     addDynamicPropertyRow = {()=>addDynamicPropertyRow()}
+                     definitions = {definitions}
+                     plusHandlerFactory = {plusHandlerFactory}
+                     deleteProperty = {deleteProperty}
+                     setActiveSchema={(index) => setActiveSchema(schemaObjects[index])}
+                   />
+                   {/* {addClasses.map((m) => <ClassComponent  /> )} */}
+                 
 
                 </SplitterPanel>
                 <SplitterPanel>

@@ -77,11 +77,6 @@ const LeftPanel = (props) => {
     const [_schemaType, setschemaType] = useState('Class')
     const [definitions, setDefinitions] = useState(getDefaultDefinitions());
 
-    const [labelSchemaName, setlabelSchemaName] = useState('Class Name');
-    const [labelSchematitle, setlabelSchemaTitle] = useState('Class Title');
-    const [labelschemaDescription, setlabelSchemaDescription] = useState('Class Description');
-    const [labelBehaviour, setlabelBehaviour] = useState('Behaviour');
-
     const [className, setClassName] = useState("");
     const [mixinBehaviour, setMixinBehaviour] = useState('');
 
@@ -122,24 +117,24 @@ const LeftPanel = (props) => {
                 <Fab size="small" aria-label="Add" className={classes.margin} onClick={props.plusHandlerFactory(i)}>
                     <AddIcon />
                 </Fab>
-                <TextField InputProps={{ className: classes.input }} InputLabelProps={{ shrink: true }} 
-                id="outlined-basic" label="Property Namespace" variant="outlined" name="propertyNamespace"
-                    value={keyValues[0]}
+                <TextField InputProps={{ className: classes.input }} InputLabelProps={{ shrink: true }}
+                    id="outlined-basic" label="Property Namespace" variant="outlined" name="propertyNamespace"
+                    defaultValue = ''//value={keyValues[0]}
                     onChange={props.updateHandlerFactory("keyT", i)} />
                 <TextField InputProps={{ className: classes.input }} InputLabelProps={{ shrink: true }}
-                 id="outlined-basic" label="Property Name" variant="outlined" name="propertyName"
+                    id="outlined-basic" label="Property Name" variant="outlined" name="propertyName"
                     value={keyValues[1]}
                     onChange={props.updateHandlerFactory("keyN", i)} />
-                <TextField InputProps={{ className: classes.input }} InputLabelProps={{ shrink: true }} 
-                id="outlined-basic" label="Property Title" variant="outlined" name="propertyTitle"
+                <TextField InputProps={{ className: classes.input }} InputLabelProps={{ shrink: true }}
+                    id="outlined-basic" label="Property Title" variant="outlined" name="propertyTitle"
                     value={objVal.title}
                     onChange={props.updateHandlerFactory("title", i)} />
                 <TextField InputProps={{ className: classes.input }} InputLabelProps={{ shrink: true }}
-                 id="outlined-basic" label="Property Data Type" variant="outlined" name="propertyType"
+                    id="outlined-basic" label="Property Data Type" variant="outlined" name="propertyType"
                     value={objVal.type}
                     onChange={props.updateHandlerFactory("type", i)} />
-                <TextField InputProps={{ className: classes.input }} InputLabelProps={{ shrink: true }} 
-                id="outlined-basic" label="Property Description" variant="outlined" name="propertyDescription"
+                <TextField InputProps={{ className: classes.input }} InputLabelProps={{ shrink: true }}
+                    id="outlined-basic" label="Property Description" variant="outlined" name="propertyDescription"
                     value={objVal.description}
                     onChange={props.updateHandlerFactory("description", i)} />
                 <IconButton style={{ width: '50px' }} aria-label="Delete" className={classes.margin}
@@ -155,24 +150,24 @@ const LeftPanel = (props) => {
     }
     const setlabelNames = (type) => {
         switch (type) {
-            case 'class' : 
-            setlabelSchemaDescription('Class Description');
+            case 'class':
+                setlabelSchemaDescription('Class Description');
                 setlabelSchemaName('Class Name');
                 setlabelSchemaTitle('Class Title');
                 setlabelBehaviour('Behaviour')
                 break;
-                case 'mixin':
-                    setlabelSchemaDescription('Mixin Description');
-                    setlabelSchemaName('Mixin Name');
-                    setlabelSchemaTitle('Mixin Title');
-                    setlabelBehaviour('Class Name')
-                    break;
-                    case 'dataType':
-                        setlabelSchemaDescription('Mixin Description');
-                        setlabelSchemaName('Mixin Name');
-                        setlabelSchemaTitle('Mixin Title');
-                        setlabelBehaviour('Class Name')
-                        break;
+            case 'mixin':
+                setlabelSchemaDescription('Mixin Description');
+                setlabelSchemaName('Mixin Name');
+                setlabelSchemaTitle('Mixin Title');
+                setlabelBehaviour('Class Name')
+                break;
+            case 'dataType':
+                setlabelSchemaDescription('Mixin Description');
+                setlabelSchemaName('Mixin Name');
+                setlabelSchemaTitle('Mixin Title');
+                setlabelBehaviour('Class Name')
+                break;
         }
     }
 
@@ -181,7 +176,7 @@ const LeftPanel = (props) => {
         <div style={{ display: 'flex', flexDirection: 'column-reverse' }}>
 
             {props.schemas.map((obj, index) => {
-                console.log('SCHEMAMAP', obj)
+                console.log('SCHEMAMAP', props.schemas)
                 if (obj.minimized) {
                     return <div
                         onClick={() => props.setActiveSchema(index)}
@@ -249,56 +244,32 @@ const LeftPanel = (props) => {
                         </Flex>
 
                         <div>
-{/* {obj.type === 'class' ? ( setlabelSchemaDescription('Class Description'),
-                setlabelSchemaName('Class Name'),
-                setlabelSchemaTitle('Class Title'),
-                setlabelBehaviour('Behaviour')) : obj.type === 'mixin' ?  (setlabelSchemaDescription('Mixin Description'),
-                setlabelSchemaName('Mixin Name'),
-                setlabelSchemaTitle('Mixin Title'),
-                setlabelBehaviour('Class Name')) :   (setlabelSchemaDescription('Datatype Description'),
-                setlabelSchemaName('Datatype Name'),
-                setlabelSchemaTitle('Datatype Title'))} */}
-                            {/* {console.log('OBJ', obj.jsonData)} */}
                             <TextField
-                                label={props.labelSchemaName}
+                                label={obj.type === "class" ? "Class Name" : obj.type === "mixin" ? "Mixin Name" : "Datatype Name"}
                                 name="schemaName"
-                                id = "schemaName"
-                                type = "text"
+                                id="schemaName"
+                                type="text"
                                 variant="filled"
                                 defaultValue=''
-                                onChange={(e) => props.onJRTESTChange(e,index,"schemaName")}
+                                onChange={(e) => props.onJRTESTChange(e, index, "schemaName")}
                             />
-                           
+
                             <TextField
                                 name="schemaTitle"
-                                label={props.labelSchematitle}
+                                label={obj.type === "class" ? "Class Title" : obj.type === "mixin" ? "Mixin Title" : "Datatype Title"}
                                 variant="filled"
                                 defaultValue={obj.jsonData.key}
-                                onChange={(e) => props.onJRTESTChange(e, index,"schemaTitle")} />
+                                onChange={(e) => props.onJRTESTChange(e, index, "schemaTitle")} />
 
                             <TextField
                                 name="schemaDescription"
-                                label={props.labelschemaDescription}
+                                label={obj.type === "class" ? "Class Description" : obj.type === "mixin" ? "Mixin Description" : "Datatype Description"}
                                 variant="filled"
                                 defaultValue={obj.jsonData.key}
-                                onChange={(e) => props.onJRTESTChange(e, index,"schemaDescription")} />
+                                onChange={(e) => props.onJRTESTChange(e, index, "schemaDescription")} />
 
-                            {/* <TextField 
-                                label="Class Description" 
-                                variant="filled" 
-                                defaultValue={obj.jsonData.key} 
-                                onChange={(e) => props.onJRTESTChange(e, index)}/> */}
-                            {props.labelSchemaName === "Class Name" ?
+                            {obj.type === "class" ?
                                 <div className="dropdown-demo" >
-                                    <Dropdown value={mixinBehaviour}
-                                        options={behaviourVal}
-                                        onChange={onmixinChange}
-                                        optionLabel="name"
-                                        placeholder="Behaviour" />
-                                    <br /><br />
-                                </div> : null}
-                            {props.labelSchemaName === "Mixin Name" ?
-                                <div className="dropdown-demo" style={{ marginLeft: 10 }}>
                                     <Dropdown value={className}
                                         options={classess}
                                         onChange={onClassChange}
@@ -306,21 +277,33 @@ const LeftPanel = (props) => {
                                         placeholder="Class Name" />
                                     <br /><br />
                                 </div> : null}
-
-                        </div>
-
-                        <div style={{ marginLeft: '2.25rem' }}>
-                            <Button variant="contained" onClick={(e) => props.addDynamicPropertyRow()} >Add Property</Button>
+                            {obj.type === "mixin" ?
+                                <div className="dropdown-demo" style={{ marginLeft: 10 }}>
+                                    <Dropdown value={mixinBehaviour}
+                                        options={behaviourVal}
+                                        onChange={onmixinChange}
+                                        optionLabel="name"
+                                        placeholder="Behaviour" />
+                                    <br /><br />
+                                </div> : null}
+                                <div style={{ marginLeft: '2.25rem' }}>
+                            <Button variant="contained" onClick={(e) => props.addDynamicPropertyRow(index)} >Add Property</Button>
 
                             <br /><br />
                             <table>
                                 <tbody>
-                                    <tr>{props.definitions.CLAZZ.properties.map((val, index) =>
-                                        (renderHighLevelProperty1(val, index, false)))}
-                                    </tr>
+                                <tr>
+                               {(  props.definitions.CLAZZ.properties.map((val, index) =>
+                                  (renderHighLevelProperty1(val, index, false))))}
+                                </tr>
+                                    
+                             
                                 </tbody>
                             </table>
                         </div>
+                        </div>
+
+                       
 
                     </div>
                 }
