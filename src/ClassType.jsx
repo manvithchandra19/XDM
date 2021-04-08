@@ -119,7 +119,8 @@ const ClassComponent = (props) =>{
     }
 
     return (
-        <div   
+        <div style={{ display: 'flex', flexDirection: 'column-reverse' }}>
+              <div   
         // onClick={() => props.setActiveSchema(index)}
         // key={index}
         style={{
@@ -191,7 +192,9 @@ const ClassComponent = (props) =>{
                             </table>
                         {/* </div> */}
                       
-        </div>)
+        </div>
+            </div>
+      )
 // return (<div>HELLLOOO<  /div>)
 }
 

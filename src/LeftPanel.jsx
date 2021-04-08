@@ -20,22 +20,7 @@ import DeleteOutline from "@spectrum-icons/workflow/DeleteOutline";
 import Minimize from "@spectrum-icons/workflow/Minimize";
 import Maximize from "@spectrum-icons/workflow/Maximize";
 
-const baseObject = {
-    "meta:license": [
-        "Copyright 2020 Adobe Systems Incorporated. All rights reserved.",
-        "This work is licensed under a Creative Commons Attribution 4.0 International (CC BY 4.0) license",
-        "you may not use this file except in compliance with the License. You may obtain a copy",
-        "of the License at https://creativecommons.org/licenses/by/4.0/"
-    ],
-    "$id": "https://ns.adobe.com/xdm/classes/${ CLASSNAME / MIXINNAME / DATATYPENAME / SCHEMA}",
-    "$schema": "http://json-schema.org/draft-06/schema#",
-    "title": "${ CLASSTITLE / MIXINTTILE / DATATYPETITLE / SCHEMA }",
-    "type": "object",
-
-    "meta:extensible": true, // ALL ARE TRUE EXCEPT WHEN USER SELECTS SCHEMA
-    "meta:abstract": true, // ALL ARE TRUE EXCEPT SELECTS SCHEMA
-
-}
+// import { getFirstValueFromMap } from './xdm2'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -119,7 +104,7 @@ const LeftPanel = (props) => {
                 </Fab>
                 <TextField InputProps={{ className: classes.input }} InputLabelProps={{ shrink: true }}
                     id="outlined-basic" label="Property Namespace" variant="outlined" name="propertyNamespace"
-                    defaultValue = ''//value={keyValues[0]}
+                    defaultValue=''//value={keyValues[0]}
                     onChange={props.updateHandlerFactory("keyT", i)} />
                 <TextField InputProps={{ className: classes.input }} InputLabelProps={{ shrink: true }}
                     id="outlined-basic" label="Property Name" variant="outlined" name="propertyName"
@@ -176,7 +161,9 @@ const LeftPanel = (props) => {
         <div style={{ display: 'flex', flexDirection: 'column-reverse' }}>
 
             {props.schemas.map((obj, index) => {
-                console.log('SCHEMAMAP', props.schemas)
+                console.log('SCHEMAMAP', obj.jsonData)
+
+                //  console.log(val)
                 if (obj.minimized) {
                     return <div
                         onClick={() => props.setActiveSchema(index)}
@@ -286,26 +273,32 @@ const LeftPanel = (props) => {
                                         placeholder="Behaviour" />
                                     <br /><br />
                                 </div> : null}
-                                <div style={{ marginLeft: '2.25rem' }}>
+
+                        </div>
+                        <div style={{ marginLeft: '2.25rem' }}>
                             <Button variant="contained" onClick={(e) => props.addDynamicPropertyRow(index)} >Add Property</Button>
 
                             <br /><br />
                             <table>
                                 <tbody>
-                                <tr>
-                               {(  props.definitions.CLAZZ.properties.map((val, index) =>
-                                  (renderHighLevelProperty1(val, index, false))))}
-                                </tr>
-                                    
-                             
+                                    <tr>
+                                        {/* {props.schemas.map((obj, index) => {
+                                            const addPropertyValue = getFirstValueFromMap(obj.jsonData.definition)
+                                            return (
+                                                addPropertyValue.properties.length === 0 ? null :
+                                                    addPropertyValue.properties.map((val, index) => {
+                                                        return (renderHighLevelProperty1(val, index, false))
+                                                    
+                                            }))
+                                        })} */}
+
+
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
-                        </div>
-
-                       
-
                     </div>
+
                 }
 
             })}

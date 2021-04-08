@@ -11,6 +11,25 @@ import { addPropertyHandler, finalJsonOutput, getDefaultDefinitions, getDefaultJ
 import { ActionButton } from '@react-spectrum/button';
 import ClassComponent from './ClassType';
 
+
+const baseObject = {
+    "meta:license": [
+        "Copyright 2020 Adobe Systems Incorporated. All rights reserved.",
+        "This work is licensed under a Creative Commons Attribution 4.0 International (CC BY 4.0) license",
+        "you may not use this file except in compliance with the License. You may obtain a copy",
+        "of the License at https://creativecommons.org/licenses/by/4.0/"
+    ],
+    "$id": "https://ns.adobe.com/xdm/classes/",
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "title": "",
+    "type": "object",
+
+    "meta:extensible": true, // ALL ARE TRUE EXCEPT WHEN USER SELECTS SCHEMA
+    "meta:abstract": true, // ALL ARE TRUE EXCEPT SELECTS SCHEMA
+
+}
+
+
 // MAIN COMPONENT
 const Schema2 = () => {
 
@@ -39,7 +58,7 @@ const Schema2 = () => {
     const [labelBehaviour, setlabelBehaviour] = useState('Behaviour');
     // const [definitions, setDefinitions] = useState([getDefaultDefinitions()]);
     
-    const [definitions, setDefinitions] = useState(getDefaultDefinitions());
+    const [definitions, setDefinitions] = useState();
     
     const jsonData = {
         schemaType: _schemaType,
@@ -203,8 +222,8 @@ const Schema2 = () => {
         let schemaObjectsCP = JSON.parse(JSON.stringify(schemaObjects));
         switch (type) {
             case 'class':
-                const classSchema = {type: 'class', minimized: false, jsonData: 
-                finalJsonOutput(definitions,jsonData)
+                const classSchema = {type: 'class', minimized: false, jsonData: baseObject
+                // finalJsonOutput(definitions,jsonData)
                 };
                 setActiveSchema(classSchema)
                 schemaObjectsCP.push(classSchema);
@@ -222,20 +241,24 @@ const Schema2 = () => {
                 // await setDefinitions(getDefaultDefinitions())
                 console.log('JSONDATA',jsonData);
                 clearData()
-                const mixinSchema = {type: 'mixin', minimized: false, jsonData: finalJsonOutput(definitions,jsonData)};
+                const mixinSchema = {type: 'mixin', minimized: false,  jsonData: baseObject
+                //  jsonData: finalJsonOutput(definitions,jsonData)
+                };
                 setActiveSchema(mixinSchema)
                 schemaObjectsCP.push(mixinSchema);
                 setSchemaObjects(schemaObjectsCP);
                 break;
             case 'dataType':
-                const dataTypeSchema = {type: 'dataType', minimized: false, jsonData: finalJsonOutput(definitions,jsonData)};
+                const dataTypeSchema = {type: 'dataType', minimized: false,  jsonData: baseObject
+                // jsonData: finalJsonOutput(definitions,jsonData)
+            };
                 setActiveSchema(dataTypeSchema)
                 schemaObjectsCP.push(dataTypeSchema);
                 setSchemaObjects(schemaObjectsCP);
                 setschemaName('')
                 setschemaTitle('')
                 setDescription('')
-                setDefinitions(getDefaultDefinitions())
+                // setDefinitions(getDefaultDefinitions())
                 break;
             default:
                 break;
