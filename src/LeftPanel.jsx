@@ -20,7 +20,7 @@ import DeleteOutline from "@spectrum-icons/workflow/DeleteOutline";
 import Minimize from "@spectrum-icons/workflow/Minimize";
 import Maximize from "@spectrum-icons/workflow/Maximize";
 
-// import { getFirstValueFromMap } from './xdm2'
+import { getFirstValueFromMap } from './xdm2'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -78,12 +78,12 @@ const LeftPanel = (props) => {
     const onClassChange = (e) => {
         console.log(e.value.name);
         setClassName(e.value);
-        setbehaviour(e.value.name)
+        props.setbehaviour(e.value.name)
     }
 
     const onmixinChange = (e) => {
         setMixinBehaviour(e.value);
-        setbehaviour(e.value.name)
+        props.setbehaviour(e.value.name)
     }
 
     const renderHighLevelProperty1 = (val, i, plusProperty) => {
@@ -133,36 +133,20 @@ const LeftPanel = (props) => {
             </div>
         )
     }
-    const setlabelNames = (type) => {
-        switch (type) {
-            case 'class':
-                setlabelSchemaDescription('Class Description');
-                setlabelSchemaName('Class Name');
-                setlabelSchemaTitle('Class Title');
-                setlabelBehaviour('Behaviour')
-                break;
-            case 'mixin':
-                setlabelSchemaDescription('Mixin Description');
-                setlabelSchemaName('Mixin Name');
-                setlabelSchemaTitle('Mixin Title');
-                setlabelBehaviour('Class Name')
-                break;
-            case 'dataType':
-                setlabelSchemaDescription('Mixin Description');
-                setlabelSchemaName('Mixin Name');
-                setlabelSchemaTitle('Mixin Title');
-                setlabelBehaviour('Class Name')
-                break;
-        }
-    }
+   
 
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column-reverse' }}>
+        <div style={{  display: 'flex',flexDirection: 'column-reverse', overflow: 'scroll' }}>
 
             {props.schemas.map((obj, index) => {
                 console.log('SCHEMAMAP', obj.jsonData)
-
+                var className = {}
+                if (props.schemaName   !== ""){
+                     className = getFirstValueFromMap(obj.jsonData.class.definitions)
+                    console.log(className)
+                }
+               
                 //  console.log(val)
                 if (obj.minimized) {
                     return <div
@@ -208,7 +192,8 @@ const LeftPanel = (props) => {
                             background: 'lightgrey',
                             borderRadius: '10px',
                             margin: '20px',
-                            padding: '10px'
+                            padding: '10px',
+                             overflow: 'scroll',position:'relative'
                         }}>
 
                         <Flex justifyContent="end">
@@ -255,7 +240,7 @@ const LeftPanel = (props) => {
                                 defaultValue={obj.jsonData.key}
                                 onChange={(e) => props.onJRTESTChange(e, index, "schemaDescription")} />
 
-                            {obj.type === "class" ?
+                            {obj.type === "mixin" ?
                                 <div className="dropdown-demo" >
                                     <Dropdown value={className}
                                         options={classess}
@@ -264,7 +249,7 @@ const LeftPanel = (props) => {
                                         placeholder="Class Name" />
                                     <br /><br />
                                 </div> : null}
-                            {obj.type === "mixin" ?
+                            {obj.type === "class" ?
                                 <div className="dropdown-demo" style={{ marginLeft: 10 }}>
                                     <Dropdown value={mixinBehaviour}
                                         options={behaviourVal}
@@ -282,6 +267,15 @@ const LeftPanel = (props) => {
                             <table>
                                 <tbody>
                                     <tr>
+                                        {/* {props.schemaName !==  "" ? className.properties.map((val,index)=>
+                                        {
+                                            return (renderHighLevelProperty1(val, index, false))}):null} */}
+                                    
+                                        {/* {obj.jsonData.class.definitions === undefined ? null : */}
+                                       {obj.jsonData.class.definitions.CLAZZ.properties.map((val,index) => {
+                                          return  (renderHighLevelProperty1(val, index, false))
+                                        } )}
+                                        
                                         {/* {props.schemas.map((obj, index) => {
                                             const addPropertyValue = getFirstValueFromMap(obj.jsonData.definition)
                                             return (

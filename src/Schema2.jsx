@@ -26,7 +26,12 @@ const baseObject = {
 
     "meta:extensible": true, // ALL ARE TRUE EXCEPT WHEN USER SELECTS SCHEMA
     "meta:abstract": true, // ALL ARE TRUE EXCEPT SELECTS SCHEMA
-
+    "description" : "",
+    "definitions": {"CLAZZ": {
+        "properties": []
+    }},
+    "allOf": [],
+    "meta:status": "experimental"
 }
 
 
@@ -58,7 +63,7 @@ const Schema2 = () => {
     const [labelBehaviour, setlabelBehaviour] = useState('Behaviour');
     // const [definitions, setDefinitions] = useState([getDefaultDefinitions()]);
     
-    const [definitions, setDefinitions] = useState();
+    const [definitions, setDefinitions] = useState(getDefaultDefinitions());
     
     const jsonData = {
         schemaType: _schemaType,
@@ -73,21 +78,31 @@ const Schema2 = () => {
 
     const handleInputChange = (e, changingProp, objKey) => {
         console.log("AASSSSS",e);
-        const newDefinitions = updateValue(definitions, objKey, changingProp, e);
-        setDefinitions({ "CLAZZ": newDefinitions.CLAZZ });
-        console.log("DEFINATION", definitions);
         const activeSchemaCopy = JSON.parse(JSON.stringify(activeSchema));
         const schemaObjectsCopy = JSON.parse(JSON.stringify(schemaObjects));
         var keyobj = objKey.toString(); 
+        var definationCopy = {}
+        if (keyobj.includes(".")){
+            const keysArr = objKey.split(".");
+            definationCopy = schemaObjectsCopy[keysArr[0]].jsonData.class.definitions 
+        }else{
+            definationCopy =   schemaObjectsCopy[objKey].jsonData.class.definitions
+        }
+        // var definationCopy =   schemaObjectsCopy[objKey].jsonData.class.definitions 
+        const newDefinitions = updateValue(definationCopy, objKey, changingProp, e);
+        setDefinitions({ "CLAZZ": newDefinitions.CLAZZ });
+        console.log("DEFINATION", definitions);
+         definationCopy = newDefinitions
+        setDefinitions(getDefaultDefinitions())
         if (keyobj.includes(".")){
             const keysArr = objKey.split("."); 
-            activeSchemaCopy.jsonData.definition = definitions
-            console.log(activeSchemaCopy.jsonData.definition);
-            schemaObjectsCopy[keysArr[0]].jsonData.definition = definitions
+            activeSchemaCopy.jsonData.class.definitions = definationCopy
+            console.log(activeSchemaCopy.jsonData.adddefination);
+            schemaObjectsCopy[keysArr[0]].jsonData.class.definitions = definationCopy
         }else{
-            activeSchemaCopy.jsonData.definition = definitions
+            activeSchemaCopy.jsonData.class.definitions = definationCopy
             console.log(activeSchemaCopy.jsonData.definition);
-            schemaObjectsCopy[objKey].jsonData.definition = definitions
+            schemaObjectsCopy[objKey].jsonData.class.definitions = definationCopy
         }
       
         setActiveSchema(activeSchemaCopy);
@@ -97,9 +112,34 @@ const Schema2 = () => {
 
     const handlePlusChange = (e, objKey) => {
         console.log(e.target.name);
-        const newDefinitions = plusHandler(definitions, objKey);
-        // setDefinitions([...definitions,{ }]);
+        const activeSchemaCopy = JSON.parse(JSON.stringify(activeSchema));
+        const schemaObjectsCopy = JSON.parse(JSON.stringify(schemaObjects));
+        var keyobj = objKey.toString(); 
+        var definationCopy = {}
+        if (keyobj.includes(".")){
+            const keysArr = objKey.split(".");
+            definationCopy = schemaObjectsCopy[keysArr[0]].jsonData.class.definitions 
+        }else{
+            definationCopy =   schemaObjectsCopy[objKey].jsonData.class.definitions
+        }
+          
+        const newDefinitions = plusHandler(definationCopy, objKey);
         setDefinitions({"CLAZZ": newDefinitions.CLAZZ} )
+        definationCopy = newDefinitions
+       if (keyobj.includes(".")){
+           const keysArr = objKey.split("."); 
+           activeSchemaCopy.jsonData.class.definitions = definationCopy
+           console.log(activeSchemaCopy.jsonData.adddefination);
+           schemaObjectsCopy[keysArr[0]].jsonData.class.definitions = definationCopy
+       }else{
+           activeSchemaCopy.jsonData.class.definitions = definationCopy
+           console.log(activeSchemaCopy.jsonData.definition);
+           schemaObjectsCopy[objKey].jsonData.class.definitions = definationCopy
+       }
+        
+        setActiveSchema(activeSchemaCopy);
+        setSchemaObjects(schemaObjectsCopy);
+        setDefinitions(getDefaultDefinitions())
     };
 
     const updateHandlerFactory = (changingProp, objKey) => {
@@ -114,18 +154,33 @@ const Schema2 = () => {
         }
     }
 
-    const addDynamicPropertyRow = () => {
+    const addDynamicPropertyRow = (index) => {
         console.log("clicked add properties");
         const newDefinitions = addPropertyHandler(definitions);
         // setDefinitions([...definitions,{ "CLAZZ": newDefinitions.CLAZZ }]);
         
         setDefinitions({"CLAZZ": newDefinitions.CLAZZ} )
+        const activeSchemaCopy = JSON.parse(JSON.stringify(activeSchema));
+        const schemaObjectsCopy = JSON.parse(JSON.stringify(schemaObjects));
+        activeSchemaCopy.jsonData.class.definitions = newDefinitions
+        schemaObjectsCopy[index].jsonData.class.definitions = newDefinitions
+        setActiveSchema(activeSchemaCopy);
+        setSchemaObjects(schemaObjectsCopy);
+        setDefinitions(getDefaultDefinitions())
+        
     }
 
     const deleteProperty = (jsonObject, i) => {
         const result = deleteProp(jsonObject, i);
         // setDefinitions([...definitions,{ "CLAZZ": result.CLAZZ }]);
-        setDefinitions({"CLAZZ": newDefinitions.CLAZZ} )
+        setDefinitions({"CLAZZ": result.CLAZZ} )
+        const activeSchemaCopy = JSON.parse(JSON.stringify(activeSchema));
+        const schemaObjectsCopy = JSON.parse(JSON.stringify(schemaObjects));
+        activeSchemaCopy.jsonData.class.definitions = result
+        schemaObjectsCopy[i].jsonData.class.definitions = result
+        setActiveSchema(activeSchemaCopy);
+        setSchemaObjects(schemaObjectsCopy);
+        setDefinitions(getDefaultDefinitions())
     }
     
 
@@ -157,28 +212,28 @@ const Schema2 = () => {
         switch (name) {
             case "schemaName":
                 setschemaName(e);
-                activeSchemaCopy.jsonData.$id = `https://ns.adobe.com/xdm/Class/${e}`
-                schemaObjectsCopy[index].jsonData.$id = `https://ns.adobe.com/xdm/Class/${e}`;
-                activeSchemaCopy.jsonData.definition = {[e]: {
-                    "properties" : {}
-                }};
-                schemaObjectsCopy[index].jsonData.definition = {[e]: {
-                    "properties" : {}
-                }};
+                activeSchemaCopy.jsonData.class.$id = `https://ns.adobe.com/xdm/Class/${e}`
+                schemaObjectsCopy[index].jsonData.class.$id = `https://ns.adobe.com/xdm/Class/${e}`;
+                // activeSchemaCopy.jsonData.class.definitions = {[e]: {
+                //     "properties" : []
+                // }};
+                // schemaObjectsCopy[index].jsonData.class.definitions = {[e]: {
+                //     "properties" : []
+                // }};
                
-                activeSchemaCopy.jsonData.allOf = [{'$ref':`#/definitions/${e}`}];
-                schemaObjectsCopy[index].jsonData.allOf =[{'$ref':`#/definitions/${e}`}];
+                activeSchemaCopy.jsonData.class.allOf = [{'$ref':`#/definitions/${e}`}];
+                schemaObjectsCopy[index].jsonData.class.allOf =[{'$ref':`#/definitions/${e}`}];
                 
                 break;
                 case "schemaTitle":
                     setschemaTitle(e);
-                    activeSchemaCopy.jsonData.title = e
-                    schemaObjectsCopy[index].jsonData.title = e;
+                    activeSchemaCopy.jsonData.class.title = e
+                    schemaObjectsCopy[index].jsonData.class.title = e;
                     break;
             case "schemaDescription":
                 setDescription(e);
-                activeSchemaCopy.jsonData.description = e
-                schemaObjectsCopy[index].jsonData.description = e;
+                activeSchemaCopy.jsonData.class.description = e
+                schemaObjectsCopy[index].jsonData.class.description = e;
                 break;
                 
         }
@@ -189,9 +244,9 @@ const Schema2 = () => {
         
         setActiveSchema(activeSchemaCopy);
         setSchemaObjects(schemaObjectsCopy);
-        setschemaName('')
-        setschemaTitle('')
-        setDescription('')
+        // setschemaName('')
+        // setschemaTitle('')
+        // setDescription('')
         // setDefinitions(getDefaultDefini0tions()) 
     }
 
@@ -222,7 +277,8 @@ const Schema2 = () => {
         let schemaObjectsCP = JSON.parse(JSON.stringify(schemaObjects));
         switch (type) {
             case 'class':
-                const classSchema = {type: 'class', minimized: false, jsonData: baseObject
+                const classSchema = {type: 'class', minimized: false, jsonData: {class:baseObject,
+                     adddefination : undefined} 
                 // finalJsonOutput(definitions,jsonData)
                 };
                 setActiveSchema(classSchema)
@@ -241,7 +297,7 @@ const Schema2 = () => {
                 // await setDefinitions(getDefaultDefinitions())
                 console.log('JSONDATA',jsonData);
                 clearData()
-                const mixinSchema = {type: 'mixin', minimized: false,  jsonData: baseObject
+                const mixinSchema = {type: 'mixin', minimized: false,  jsonData: {class:baseObject, adddefination : {}} 
                 //  jsonData: finalJsonOutput(definitions,jsonData)
                 };
                 setActiveSchema(mixinSchema)
@@ -249,7 +305,7 @@ const Schema2 = () => {
                 setSchemaObjects(schemaObjectsCP);
                 break;
             case 'dataType':
-                const dataTypeSchema = {type: 'dataType', minimized: false,  jsonData: baseObject
+                const dataTypeSchema = {type: 'dataType', minimized: false,  jsonData: {class:baseObject, adddefination : definitions} 
                 // jsonData: finalJsonOutput(definitions,jsonData)
             };
                 setActiveSchema(dataTypeSchema)
@@ -302,7 +358,7 @@ const Schema2 = () => {
                      labelSchematitle = {labelSchematitle}
                      labelschemaDescription = {labelschemaDescription}
                      updateHandlerFactory = {updateHandlerFactory}
-                     addDynamicPropertyRow = {()=>addDynamicPropertyRow()}
+                     addDynamicPropertyRow = {(index)=>addDynamicPropertyRow(index)}
                      definitions = {definitions}
                      plusHandlerFactory = {plusHandlerFactory}
                      deleteProperty = {deleteProperty}
@@ -315,7 +371,7 @@ const Schema2 = () => {
                 <SplitterPanel>
                     {/* <RightPanel  jsonData={finalJsonOutput(definitions, jsonData)} /> */}
                     {console.log('ACTIVESCHEMA', activeSchema?.jsonData ?? undefined)}
-                    <RightPanel jsonData={activeSchema?.jsonData ?? undefined}/>
+                    <RightPanel jsonData={activeSchema?.jsonData.class ?? undefined}/>
                 </SplitterPanel>
             </Splitter>
 
