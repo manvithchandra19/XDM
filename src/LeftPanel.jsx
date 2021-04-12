@@ -38,11 +38,12 @@ const useStyles = makeStyles((theme) => ({
 
     button: {
         margin: theme.spacing.unit,
-        width: 80,
+        width: 50,
     },
     input: {
         // display: 'none',
-        height: 28
+        height: 28,
+        width:80
     },
 
     formControl: {
@@ -86,7 +87,7 @@ const LeftPanel = (props) => {
         props.setbehaviour(e.value.name)
     }
 
-    const renderHighLevelProperty1 = (val, i, plusProperty) => {
+    const renderHighLevelProperty1 = (val, i, plusProperty,mainIndex) => {
         console.log("Object Key =====" + i);
         const objKey = Object.keys(val)[0];
         const objVal = val[objKey];
@@ -99,7 +100,7 @@ const LeftPanel = (props) => {
         return (
             <div style={{ marginLeft: '2.25rem' }}>
                 {plusProperty ? <span style={{ marginLeft: '2.25rem' }} ></span> : null}
-                <Fab size="small" aria-label="Add" className={classes.margin} onClick={props.plusHandlerFactory(i)}>
+                <Fab size="small" aria-label="Add" className={classes.margin} onClick={props.plusHandlerFactory(i,mainIndex)}>
                     <AddIcon />
                 </Fab>
                 <TextField InputProps={{ className: classes.input }} InputLabelProps={{ shrink: true }}
@@ -122,8 +123,12 @@ const LeftPanel = (props) => {
                     id="outlined-basic" label="Property Description" variant="outlined" name="propertyDescription"
                     value={objVal.description}
                     onChange={props.updateHandlerFactory("description", i)} />
+                     <TextField InputProps={{ className: classes.input }} InputLabelProps={{ shrink: true }}
+                    id="outlined-basic" label="examples" variant="outlined" name="examples"
+                    value={objVal.examples}
+                    onChange={props.updateHandlerFactory("examples", i)} />
                 <IconButton style={{ width: '50px' }} aria-label="Delete" className={classes.margin}
-                    onClick={() => props.deleteProperty(definitions, i)}>
+                    onClick={() => props.deleteProperty(definitions, i,mainIndex)}>
                     <DeleteIcon fontSize="small" />
                 </IconButton>
                 {nestedValues.map((nv, ni) => {
@@ -133,7 +138,16 @@ const LeftPanel = (props) => {
             </div>
         )
     }
+
+    const clickFunction =(index) => {
+        return () => {
+            console.log("function index==",index);
+            props.currentIndex(index);
+            props.setActiveSchema(index);
+        }
+    }
    
+    
 
 
     return (
@@ -141,16 +155,17 @@ const LeftPanel = (props) => {
 
             {props.schemas.map((obj, index) => {
                 console.log('SCHEMAMAP', obj.jsonData)
-                var className = {}
-                if (props.schemaName   !== ""){
-                     className = getFirstValueFromMap(obj.jsonData.class.definitions)
-                    console.log(className)
-                }
-               
+                // var className = {}
+                // if (props.schemaName   !== ""){
+                //      className = getFirstValueFromMap(obj.jsonData.class.definitions)
+                //     console.log(className)
+                // }
+            console.log("index === ",index);
+            //    props.currentIndex(index)
                 //  console.log(val)
                 if (obj.minimized) {
                     return <div
-                        onClick={() => props.setActiveSchema(index)}
+                    onClick={clickFunction(index)}
                         key={index}
                         style={{
                             border: `5px solid ${obj.type === 'class' ? '#9498DC' : obj.type === 'mixin' ? '#B582A3' : '#D66D6C'}`,
@@ -183,7 +198,7 @@ const LeftPanel = (props) => {
                     </div>
                 } else {
                     return <div
-                        onClick={() => props.setActiveSchema(index)}
+                    onClick={clickFunction(index)}
                         key={index}
                         style={{
                             border: `5px solid ${obj.type === 'class' ? '#9498DC' : obj.type === 'mixin' ? '#B582A3' : '#D66D6C'}`,
@@ -272,8 +287,8 @@ const LeftPanel = (props) => {
                                             return (renderHighLevelProperty1(val, index, false))}):null} */}
                                     
                                         {/* {obj.jsonData.class.definitions === undefined ? null : */}
-                                       {obj.jsonData.class.definitions.CLAZZ.properties.map((val,index) => {
-                                          return  (renderHighLevelProperty1(val, index, false))
+                                       {obj.jsonData.class.definitions.CLAZZ.properties.map((val,index1) => {
+                                          return  (renderHighLevelProperty1(val, index1, false,index))
                                         } )}
                                         
                                         {/* {props.schemas.map((obj, index) => {

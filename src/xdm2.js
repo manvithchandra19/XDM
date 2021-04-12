@@ -60,7 +60,8 @@ export let addPropertyHandler = (jsonObject) => {
         ':': {
             'title' : "",
             'type' : "",
-            'description' :""
+            'description' :"",
+            'examples' : []
         }
     });
     return jsonObject;
@@ -92,7 +93,8 @@ export let  plusHandler = (jsonObject,objectkey) => {
             ':': {
                 'title' : "",
                 'type' : "",
-                'description' :""
+                'description' :"",
+                'examples':[]
             }
         }
     );
@@ -124,6 +126,9 @@ export let updateValue = (jsonObject , objectkey , changingProp, val) => {
         case "description":
             currentObject.description = val;
             break;
+            case "examples" :
+                currentObject.examples = val;
+                break;
         case "keyT":
              old_key = getFirstKeyFromMap(expectedProperty);
              old_keys = old_key.split(":");
@@ -163,7 +168,7 @@ export let deleteProp = (jsonObject,objectkey) => {
     console.log(lastindex);
     let val = getFirstValueFromMap( expectedProperty)
     console.log('vallllllllllll', val);
-    val.properties.splice(lastindex,1)
+    val.properties.splice(lastindex)
     // val.type = "string"
     }else{
         expectedProperty.properties.splice(objectkey,1)
