@@ -3,8 +3,6 @@ import 'primeicons/primeicons.css';
 import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.css';
 import 'bootstrap/dist/css/bootstrap.css';
-import Grid from '@material-ui/core/Grid';
-import Divider from '@material-ui/core/Divider';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Fab from '@material-ui/core/Fab';
@@ -20,7 +18,6 @@ import DeleteOutline from "@spectrum-icons/workflow/DeleteOutline";
 import Minimize from "@spectrum-icons/workflow/Minimize";
 import Maximize from "@spectrum-icons/workflow/Maximize";
 
-import { getFirstValueFromMap } from './xdm2'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -287,8 +284,6 @@ const LeftPanel = (props) => {
                                           return  (renderHighLevelProperty1(val, index1, false,index))
                                         } )}
                                       
-
-
                                     </tr>
                                 </tbody>
                             </table>

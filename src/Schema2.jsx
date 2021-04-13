@@ -14,7 +14,8 @@ import { ActionButton } from '@react-spectrum/button';
 const baseObject = {
     "meta:license": [
         "Copyright 2020 Adobe Systems Incorporated. All rights reserved.",
-        "This work is licensed under a Creative Commons Attribution 4.0 International (CC BY 4.0) license",
+        "This work is licensed under a Creative Commons Attribution 4.0",
+        " International (CC BY 4.0) license",
         "you may not use this file except in compliance with the License. You may obtain a copy",
         "of the License at https://creativecommons.org/licenses/by/4.0/"
     ],
@@ -26,7 +27,7 @@ const baseObject = {
     "meta:extensible": true, // ALL ARE TRUE EXCEPT WHEN USER SELECTS SCHEMA
     "meta:abstract": true, // ALL ARE TRUE EXCEPT SELECTS SCHEMA
     "description" : "",
-    "definitions": {"CLAZZ": {
+    "definitions": {"CLAZZ": { //defination name
         "properties": []
     }},
     "allOf": [],
@@ -52,16 +53,17 @@ const Schema2 = () => {
     // const [behaviour, setbehaviour] = useState('');
     // const [clazzName, setClazzName] = useState('');
 
-    const [currentIndex , setCurrentIndex] = useState(0)
+    const [currentIndex , setCurrentIndex] = useState(0);
 
     // const [definitions, setDefinitions] = useState(getDefaultDefinitions());
-    const [schemaObjects, setSchemaObjects] = useState([ ])
+    const [schemaObjects, setSchemaObjects] = useState([]) //schemaObjects[currentIndex]
 
-    const handleInputChange = (e, changingProp, objKey) => {
+    //for adding the properties
+    const handleInputChange = (e, changingProp, objKey) => {  //e = input value , objKey : index of property
         console.log("AASSSSS",e);
         const activeSchemaCopy = JSON.parse(JSON.stringify(activeSchema));
         const schemaObjectsCopy = JSON.parse(JSON.stringify(schemaObjects));
-        var keyobj = objKey.toString(); 
+        var keyobj = objKey.toString(); //
         var definationCopy = {}
         if (keyobj.includes(".")){
             const keysArr = objKey.split(".");
@@ -70,7 +72,7 @@ const Schema2 = () => {
             definationCopy =   schemaObjectsCopy[currentIndex].jsonData.class.definitions
         }
         // var definationCopy =   schemaObjectsCopy[objKey].jsonData.class.definitions 
-        const newDefinitions = updateValue(definationCopy, objKey, changingProp, e);
+        const newDefinitions = updateValue(definationCopy, objKey, changingProp, e); //calling functionto update
         // setDefinitions({ "CLAZZ": newDefinitions.CLAZZ });
          definationCopy = newDefinitions
         // setDefinitions(getDefaultDefinitions())
@@ -90,6 +92,7 @@ const Schema2 = () => {
         // setDefinitions(getDefaultDefinitions())
     };
 
+    //for adding plus property || nested structure
     const handlePlusChange = (e, objKey,index) => {
         console.log(e.target.name);
         // setActiveSchema(schemaObjects[currentIndex])
@@ -126,6 +129,7 @@ const Schema2 = () => {
       
     };
 
+    //closures
     const updateHandlerFactory = (changingProp, objKey) => {
         return (e) => {
             handleInputChange(e, changingProp, objKey);
@@ -178,7 +182,6 @@ const Schema2 = () => {
 
     // dummy state
    
-
     const [activeSchema, setActiveSchema1] = useState(undefined)
 
     const setActiveSchema = (obj) => {
@@ -197,7 +200,7 @@ const Schema2 = () => {
 
      }
 
-
+//handling input for name, title
     const onJRTESTChangeHandler = (e,index,name) => {
         console.log("name",e);
         const activeSchemaCopy = JSON.parse(JSON.stringify(activeSchema));
@@ -206,7 +209,7 @@ const Schema2 = () => {
         setCurrentIndex(index)
         switch (name) {
             case "schemaName":
-                setschemaName(e);
+                // setschemaName(e);
                 activeSchemaCopy.jsonData.class.$id = `https://ns.adobe.com/xdm/Class/${e}`
                 schemaObjectsCopy[index].jsonData.class.$id = `https://ns.adobe.com/xdm/Class/${e}`;
                
@@ -215,12 +218,12 @@ const Schema2 = () => {
                 
                 break;
                 case "schemaTitle":
-                    setschemaTitle(e);
+                    // setschemaTitle(e);
                     activeSchemaCopy.jsonData.class.title = e
                     schemaObjectsCopy[index].jsonData.class.title = e;
                     break;
             case "schemaDescription":
-                setDescription(e);
+                // setDescription(e);
                 activeSchemaCopy.jsonData.class.description = e
                 schemaObjectsCopy[index].jsonData.class.description = e;
                 break;
@@ -272,13 +275,13 @@ const Schema2 = () => {
                 schemaObjectsCP.push(mixinSchema);
                 setSchemaObjects(schemaObjectsCP);
                 break;
-            case 'dataType':
-                const dataTypeSchema = {type: 'dataType', minimized: false,  jsonData: {class:baseObject } 
-            };
-                setActiveSchema(dataTypeSchema)
-                schemaObjectsCP.push(dataTypeSchema);
-                setSchemaObjects(schemaObjectsCP);
-                break;
+            // case 'dataType':
+            //     const dataTypeSchema = {type: 'dataType', minimized: false,  jsonData: {class:baseObject } 
+            // };
+            //     setActiveSchema(dataTypeSchema)
+            //     schemaObjectsCP.push(dataTypeSchema);
+            //     setSchemaObjects(schemaObjectsCP);
+            //     break;
             default:
                 break;
         }
@@ -328,7 +331,7 @@ const Schema2 = () => {
 
                 </SplitterPanel>
                 <SplitterPanel>
-                    {console.log('ACTIVESCHEMA', activeSchema?.jsonData ?? undefined)}
+                    {/* {console.log('ACTIVESCHEMA', activeSchema?.jsonData ?? undefined)} */}
                     <RightPanel jsonData={schemaObjects[currentIndex]?.jsonData.class ?? undefined}/>
                 </SplitterPanel>
             </Splitter>
