@@ -60,9 +60,6 @@ const LeftPanel = (props) => {
 
     const classes = useStyles();
 
-    const [_schemaType, setschemaType] = useState('Class')
-    const [definitions, setDefinitions] = useState(getDefaultDefinitions());
-
     const [className, setClassName] = useState("");
     const [mixinBehaviour, setMixinBehaviour] = useState('');
 
@@ -95,7 +92,7 @@ const LeftPanel = (props) => {
         let nestedValues = [];
         if (objVal.type == "object") {
             for (let i2 = 0; i2 < objVal.properties.length; i2++)
-                nestedValues.push(renderHighLevelProperty1(objVal.properties[i2], i + "." + i2, true));
+                nestedValues.push(renderHighLevelProperty1(objVal.properties[i2], i + "." + i2, true,mainIndex));
         }
         return (
             <div style={{ marginLeft: '2.25rem' }}>
@@ -128,7 +125,7 @@ const LeftPanel = (props) => {
                     value={objVal.examples}
                     onChange={props.updateHandlerFactory("examples", i)} />
                 <IconButton style={{ width: '50px' }} aria-label="Delete" className={classes.margin}
-                    onClick={() => props.deleteProperty(definitions, i,mainIndex)}>
+                    onClick={clickDeleteFunction( i,mainIndex)}>
                     <DeleteIcon fontSize="small" />
                 </IconButton>
                 {nestedValues.map((nv, ni) => {
@@ -146,6 +143,14 @@ const LeftPanel = (props) => {
             props.setActiveSchema(index);
         }
     }
+
+    const clickDeleteFunction = ( i,mainIndex) => {
+        console.log("delete click call => ", i, mainIndex);
+        return () => {
+            console.log("delete actual call => ", i, mainIndex);
+            props.deleteProperty( i,mainIndex)
+        }
+    }
    
     
 
@@ -155,11 +160,6 @@ const LeftPanel = (props) => {
 
             {props.schemas.map((obj, index) => {
                 console.log('SCHEMAMAP', obj.jsonData)
-                // var className = {}
-                // if (props.schemaName   !== ""){
-                //      className = getFirstValueFromMap(obj.jsonData.class.definitions)
-                //     console.log(className)
-                // }
             console.log("index === ",index);
             //    props.currentIndex(index)
                 //  console.log(val)
@@ -235,6 +235,7 @@ const LeftPanel = (props) => {
                                 label={obj.type === "class" ? "Class Name" : obj.type === "mixin" ? "Mixin Name" : "Datatype Name"}
                                 name="schemaName"
                                 id="schemaName"
+                                style ={{width: '50'}}
                                 type="text"
                                 variant="filled"
                                 defaultValue=''
@@ -282,24 +283,10 @@ const LeftPanel = (props) => {
                             <table>
                                 <tbody>
                                     <tr>
-                                        {/* {props.schemaName !==  "" ? className.properties.map((val,index)=>
-                                        {
-                                            return (renderHighLevelProperty1(val, index, false))}):null} */}
-                                    
-                                        {/* {obj.jsonData.class.definitions === undefined ? null : */}
                                        {obj.jsonData.class.definitions.CLAZZ.properties.map((val,index1) => {
                                           return  (renderHighLevelProperty1(val, index1, false,index))
                                         } )}
-                                        
-                                        {/* {props.schemas.map((obj, index) => {
-                                            const addPropertyValue = getFirstValueFromMap(obj.jsonData.definition)
-                                            return (
-                                                addPropertyValue.properties.length === 0 ? null :
-                                                    addPropertyValue.properties.map((val, index) => {
-                                                        return (renderHighLevelProperty1(val, index, false))
-                                                    
-                                            }))
-                                        })} */}
+                                      
 
 
                                     </tr>

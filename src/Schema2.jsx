@@ -2,14 +2,13 @@ import { Splitter, SplitterPanel } from 'primereact/splitter'
 import LeftPanel from './LeftPanel'
 import RightPanel from './rightPanel'
 import './Schema2.css'
-import React, { useState, useEffect, useReducer } from "react";
+import React, { useState } from "react";
 import 'primeicons/primeicons.css';
 import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.css';
 import 'bootstrap/dist/css/bootstrap.css';
-import { addPropertyHandler, finalJsonOutput, getDefaultDefinitions, getDefaultJson, initialObject, plusHandler, updateValue, deleteProp,getFirstValueFromMap } from "./xdm2";
+import { addPropertyHandler, plusHandler, updateValue, deleteProp } from "./xdm2";
 import { ActionButton } from '@react-spectrum/button';
-import ClassComponent from './ClassType';
 
 
 const baseObject = {
@@ -45,37 +44,18 @@ const Schema2 = () => {
         // {type: 'dataType', label: 'Add DT', style: {background: '#D66D6C'}}
     ];
     
-    const [_schemaType, setschemaType] = useState('Class')
-    const [schemaName, setschemaName] = useState('');
-    const [schemaTitle, setschemaTitle] = useState('');
-    const [schemadescription, setDescription] = useState('');
-    const [metaStatus, setmetastatus] = useState('');
-    const [behaviour, setbehaviour] = useState('');
-    const [clazzName, setClazzName] = useState('');
+    // const [_schemaType, setschemaType] = useState('Class')
+    // const [schemaName, setschemaName] = useState('');
+    // const [schemaTitle, setschemaTitle] = useState('');
+    // const [schemadescription, setDescription] = useState('');
+    // const [metaStatus, setmetastatus] = useState('');
+    // const [behaviour, setbehaviour] = useState('');
+    // const [clazzName, setClazzName] = useState('');
 
-    const [addClasses, setClasses] = useState([]);
-
-    const [onClickClassButton , setonClickClass] = useState(false);
     const [currentIndex , setCurrentIndex] = useState(0)
 
-    const [labelSchemaName, setlabelSchemaName] = useState('Class Name');
-    const [labelSchematitle, setlabelSchemaTitle] = useState('Class Title');
-    const [labelschemaDescription, setlabelSchemaDescription] = useState('Class Description');
-    const [labelBehaviour, setlabelBehaviour] = useState('Behaviour');
-    // const [definitions, setDefinitions] = useState([getDefaultDefinitions()]);
-    
-    const [definitions, setDefinitions] = useState(getDefaultDefinitions());
-    
-    const jsonData = {
-        schemaType: _schemaType,
-        schemaName: schemaName,
-        title: schemaTitle,
-        description: schemadescription,
-        metaStatus: metaStatus,
-        behaviour: behaviour,
-        clazzName: clazzName,
-        definition : definitions
-    };
+    // const [definitions, setDefinitions] = useState(getDefaultDefinitions());
+    const [schemaObjects, setSchemaObjects] = useState([ ])
 
     const handleInputChange = (e, changingProp, objKey) => {
         console.log("AASSSSS",e);
@@ -91,10 +71,9 @@ const Schema2 = () => {
         }
         // var definationCopy =   schemaObjectsCopy[objKey].jsonData.class.definitions 
         const newDefinitions = updateValue(definationCopy, objKey, changingProp, e);
-        setDefinitions({ "CLAZZ": newDefinitions.CLAZZ });
-        console.log("DEFINATION", definitions);
+        // setDefinitions({ "CLAZZ": newDefinitions.CLAZZ });
          definationCopy = newDefinitions
-        setDefinitions(getDefaultDefinitions())
+        // setDefinitions(getDefaultDefinitions())
         if (keyobj.includes(".")){
             const keysArr = objKey.split("."); 
             activeSchemaCopy.jsonData.class.definitions = definationCopy
@@ -127,22 +106,24 @@ const Schema2 = () => {
         }
           
         const newDefinitions = plusHandler(definationCopy, objKey);
-        setDefinitions({"CLAZZ": newDefinitions.CLAZZ} )
+        // setDefinitions({"CLAZZ": newDefinitions.CLAZZ} )
         definationCopy = newDefinitions
        if (keyobj.includes(".")){
            const keysArr = objKey.split("."); 
            activeSchemaCopy.jsonData.class.definitions = definationCopy
            console.log(activeSchemaCopy.jsonData.adddefination);
            schemaObjectsCopy[index].jsonData.class.definitions = definationCopy
+           setActiveSchema(activeSchemaCopy);
+           setSchemaObjects(schemaObjectsCopy);
        }else{
            activeSchemaCopy.jsonData.class.definitions = definationCopy
            console.log(activeSchemaCopy.jsonData.definition);
            schemaObjectsCopy[index].jsonData.class.definitions = definationCopy
+           setActiveSchema(activeSchemaCopy);
+           setSchemaObjects(schemaObjectsCopy);
        }
         
-        setActiveSchema(activeSchemaCopy);
-        setSchemaObjects(schemaObjectsCopy);
-        setDefinitions(getDefaultDefinitions())
+      
     };
 
     const updateHandlerFactory = (changingProp, objKey) => {
@@ -167,42 +148,45 @@ const Schema2 = () => {
         const newDefinitions = addPropertyHandler(activeSchemaCopy1.jsonData.class.definitions);
         // setDefinitions([...definitions,{ "CLAZZ": newDefinitions.CLAZZ }]);
         setCurrentIndex(index)
-        setDefinitions({"CLAZZ": newDefinitions.CLAZZ} )
+        // setDefinitions({"CLAZZ": newDefinitions.CLAZZ} )
         const activeSchemaCopy = JSON.parse(JSON.stringify(activeSchema));
         const schemaObjectsCopy = JSON.parse(JSON.stringify(schemaObjects));
         activeSchemaCopy.jsonData.class.definitions = newDefinitions
         schemaObjectsCopy[index].jsonData.class.definitions = newDefinitions
         setActiveSchema(activeSchemaCopy);
         setSchemaObjects(schemaObjectsCopy);
-        setDefinitions(getDefaultDefinitions())
+        // setDefinitions(getDefaultDefinitions())
     }
 
-    const deleteProperty = (jsonObject, i,currentindex) => {
+    const deleteProperty = (i,currentindex) => {
        
         // setDefinitions([...definitions,{ "CLAZZ": result.CLAZZ }]);
         // setDefinitions({"CLAZZ": result.CLAZZ} )
-        const activeSchemaCopy = JSON.parse(JSON.stringify(activeSchema));
+        // const activeSchemaCopy = JSON.parse(JSON.stringify(activeSchema));
         const schemaObjectsCopy = JSON.parse(JSON.stringify(schemaObjects));
-        const deleteDefination = activeSchemaCopy.jsonData.class.definitions
-        console.log(activeSchemaCopy);
+        const deleteDefination = schemaObjects[currentIndex].jsonData.class.definitions
+        // console.log(activeSchemaCopy);
         const result = deleteProp(deleteDefination, i);
-        activeSchemaCopy.jsonData.class.definitions = result
+        // activeSchemaCopy.jsonData.class.definitions = result
         schemaObjectsCopy[currentindex].jsonData.class.definitions = result
-        setActiveSchema(activeSchemaCopy);
+        // setActiveSchema(activeSchemaCopy);
         setSchemaObjects(schemaObjectsCopy);
-        setDefinitions(getDefaultDefinitions())
+        // setDefinitions(getDefaultDefinitions())
     }
     
 
 
     // dummy state
-    const [schemaObjects, setSchemaObjects] = useState([
-        // {type: 'class', minimized: false, jsonData: {key: 'CLASS', someOtherKey: 'VALUE'}},
-        // {type: 'mixin', minimized: false,jsonData: {key: 'MIXIN', someOtherKey: 'VALUE2'}},
-        // {type: 'datatype', minimized: false,jsonData: {key: 'DATA TYPE', someOtherKey: 'VALUE2'}},
-    ])
+   
 
-    const [activeSchema, setActiveSchema] = useState(undefined)
+    const [activeSchema, setActiveSchema1] = useState(undefined)
+
+    const setActiveSchema = (obj) => {
+        console.log("setActive Schemma called");
+        console.log(obj);
+        console.log("setActive Schemma done");
+        setActiveSchema1(obj);
+    }
 
     const onDeleteSchema = (i) => {
 
@@ -220,18 +204,11 @@ const Schema2 = () => {
         const schemaObjectsCopy = JSON.parse(JSON.stringify(schemaObjects));
         console.log(activeSchemaCopy.jsonData);
         setCurrentIndex(index)
-        console.log("indexxxxx",index );
         switch (name) {
             case "schemaName":
                 setschemaName(e);
                 activeSchemaCopy.jsonData.class.$id = `https://ns.adobe.com/xdm/Class/${e}`
                 schemaObjectsCopy[index].jsonData.class.$id = `https://ns.adobe.com/xdm/Class/${e}`;
-                // activeSchemaCopy.jsonData.class.definitions = {[e]: {
-                //     "properties" : []
-                // }};
-                // schemaObjectsCopy[index].jsonData.class.definitions = {[e]: {
-                //     "properties" : []
-                // }};
                
                 activeSchemaCopy.jsonData.class.allOf = [{'$ref':`#/definitions/${e}`}];
                 schemaObjectsCopy[index].jsonData.class.allOf =[{'$ref':`#/definitions/${e}`}];
@@ -249,28 +226,13 @@ const Schema2 = () => {
                 break;
                 
         }
-        // change values
-        
         console.log('COPY', activeSchemaCopy);
         console.log('activeSchema', activeSchema)
         
         setActiveSchema(activeSchemaCopy);
         setSchemaObjects(schemaObjectsCopy);
-        // setschemaName('')
-        // setschemaTitle('')
-        // setDescription('')
-        // setDefinitions(getDefaultDefini0tions()) 
     }
 
-    const clearData = () => {
-        
-        const activeSchemaCopy = JSON.parse(JSON.stringify(activeSchema));
-        activeSchemaCopy.jsonData.$id = `https://ns.adobe.com/xdm/Class/`
-        activeSchemaCopy.jsonData.definition = {'': {
-            "properties" : {}
-        }};
-        setActiveSchema(activeSchemaCopy);
-    }
 
     const onWindowAction = (isMinimized, index) => {
         console.log('HERE', isMinimized, index)
@@ -287,49 +249,35 @@ const Schema2 = () => {
 
     const onAddSchema = async (type) => {
         let schemaObjectsCP = JSON.parse(JSON.stringify(schemaObjects));
-        const latestIndex = schemaObjectsCP.length + 1
-               setCurrentIndex(latestIndex)
+        if (schemaObjectsCP.length !== 0){
+            const latestIndex = schemaObjectsCP.length + 1
+            setCurrentIndex(latestIndex)
+        }else{
+            setCurrentIndex(0)
+        }
+        
         switch (type) {
             case 'class':
                 const classSchema = {type: 'class', minimized: false, jsonData: {class:baseObject} 
-                // finalJsonOutput(definitions,jsonData)
                 };
                 setActiveSchema(classSchema)
                 schemaObjectsCP.push(classSchema);
-                setschemaType("Class")
-                setClasses([...addClasses,addClasses.length])
+                // setschemaType("Class")
                 setSchemaObjects(schemaObjectsCP);
-               clearData()
-               
-                // setlabelSchemaDescription('Class Description');
-                // setlabelSchemaName('Class Name');
-                // setlabelSchemaTitle('Class Title');
-                // setlabelBehaviour('Behaviour');
-                setonClickClass(true);
                 break;
             case 'mixin':
-                // await setDefinitions(getDefaultDefinitions())
-                console.log('JSONDATA',jsonData);
-                clearData()
                 const mixinSchema = {type: 'mixin', minimized: false,  jsonData: {class:baseObject} 
-                //  jsonData: finalJsonOutput(definitions,jsonData)
                 };
                 setActiveSchema(mixinSchema)
                 schemaObjectsCP.push(mixinSchema);
                 setSchemaObjects(schemaObjectsCP);
                 break;
             case 'dataType':
-                const dataTypeSchema = {type: 'dataType', minimized: false,  jsonData: {class:baseObject
-                } 
-                // jsonData: finalJsonOutput(definitions,jsonData)
+                const dataTypeSchema = {type: 'dataType', minimized: false,  jsonData: {class:baseObject } 
             };
                 setActiveSchema(dataTypeSchema)
                 schemaObjectsCP.push(dataTypeSchema);
                 setSchemaObjects(schemaObjectsCP);
-                setschemaName('')
-                setschemaTitle('')
-                setDescription('')
-                // setDefinitions(getDefaultDefinitions())
                 break;
             default:
                 break;
@@ -365,30 +313,23 @@ const Schema2 = () => {
                      onJRTESTChange={(e, index,name) => onJRTESTChangeHandler(e, index,name)}
                      schemas={schemaObjects} 
                      deleteSchema={(index) => onDeleteSchema(index)}
-                     schemaDescription = {schemadescription}
-                     schemaName = {schemaName}
-                     schemaTitle = {schemaTitle}
-                     labelSchemaName = {labelSchemaName}
-                     behaviour = {behaviour}
-                     labelSchematitle = {labelSchematitle}
-                     labelschemaDescription = {labelschemaDescription}
+                    //  schemaDescription = {schemadescription}
+                    //  schemaTitle = {schemaTitle}
+                    //  behaviour = {behaviour}
                      updateHandlerFactory = {updateHandlerFactory}
                      addDynamicPropertyRow = {(index)=>addDynamicPropertyRow(index)}
-                     definitions = {definitions}
+                    //  definitions = {definitions}
                      plusHandlerFactory = {plusHandlerFactory}
                      deleteProperty = {deleteProperty}
                      currentIndex = {(index) => setCurrentIndex(index)}
                      setActiveSchema={(index) => setActiveSchema(schemaObjects[index])}
 
                    />
-                   {/* {addClasses.map((m) => <ClassComponent  /> )} */}
-                 
 
                 </SplitterPanel>
                 <SplitterPanel>
-                    {/* <RightPanel  jsonData={finalJsonOutput(definitions, jsonData)} /> */}
                     {console.log('ACTIVESCHEMA', activeSchema?.jsonData ?? undefined)}
-                    <RightPanel jsonData={activeSchema?.jsonData.class ?? undefined}/>
+                    <RightPanel jsonData={schemaObjects[currentIndex]?.jsonData.class ?? undefined}/>
                 </SplitterPanel>
             </Splitter>
 
