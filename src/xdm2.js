@@ -1,6 +1,6 @@
 export let getDefaultDefinitions = () => {
     return {
-        "CLAZZ": {
+        "definitionName": {
             "properties": []
         }
     };
@@ -25,7 +25,7 @@ export let finalJsonOutput = (jsonObject , params) => {
         
         // "meta:abstract": true,
         // "definitions": {
-        //     [params.schemaName] : jsonObject.CLAZZ
+        //     [params.schemaName] : jsonObject.definitionName
         // }
     }
 
@@ -47,7 +47,7 @@ export let finalJsonOutput = (jsonObject , params) => {
     }
     jsonData["description"] = params.description
     jsonData["definition"] = {
-        [params.schemaName] : params.definition.CLAZZ
+        [params.schemaName] : params.definition.definitionName
     }
     jsonData['allOf'] = [{ "$ref": `#/definitions/${params.schemaName}` }];
     jsonData["meta:status"] = params.metaStatus;
@@ -56,7 +56,7 @@ export let finalJsonOutput = (jsonObject , params) => {
 
 export let addPropertyHandler = (jsonObject) => {
     console.log("json changed");
-    jsonObject.CLAZZ.properties.push({
+    jsonObject.definitionName.properties.push({
         ':': {
             'title' : "",
             'type' : "",
@@ -78,7 +78,7 @@ export let getFirstKeyFromMap = (jsonObject) => {
 }
 
 export let  plusHandler = (jsonObject,objectkey) => {
-    let expectedProperty = jsonObject.CLAZZ;
+    let expectedProperty = jsonObject.definitionName;
     objectkey = objectkey + "";
     const keysArr = objectkey.split(".");       //0,0 =0.0
     for(let i = 0; i < keysArr.length; i++){
@@ -102,7 +102,7 @@ export let  plusHandler = (jsonObject,objectkey) => {
 }
 
 export let updateValue = (jsonObject , objectkey , changingProp, val) => {
-    let expectedProperty = jsonObject.CLAZZ;
+    let expectedProperty = jsonObject.definitionName;
     objectkey = objectkey + "";
     const keysArr = objectkey.split(".");
     expectedProperty = expectedProperty.properties[keysArr[0]];
@@ -128,7 +128,28 @@ export let updateValue = (jsonObject , objectkey , changingProp, val) => {
             break;
             case "examples" :
                 val = val.split(",");
-                currentObject.examples = val;
+            //    if (currentObject.type === "integer"){
+                let intVal = [];
+                for(let i = 0; i<val.length;i++){
+                    if (val[i] !==""){
+                        if(isNaN(val[i])){
+                            intVal.push(val[i])
+                        }else{
+                            let currentval = parseInt(val[i])
+                            intVal.push(currentval)
+                        }
+                       
+                    }else{
+                        intVal.push(val[i])
+                    }
+                   
+                }
+                
+                currentObject.examples = intVal;
+            //    }else{
+                
+            //     currentObject.examples = val;
+            //    }
                 break;
         case "keyT":
              old_key = getFirstKeyFromMap(expectedProperty);
@@ -152,7 +173,7 @@ export let updateValue = (jsonObject , objectkey , changingProp, val) => {
 
 export let deleteProp = (jsonObject,objectkey) => {
     
-    let expectedProperty = jsonObject.CLAZZ;
+    let expectedProperty = jsonObject.definitionName;
     var keyobj = objectkey.toString();
     if (keyobj.includes(".")){
         objectkey = objectkey + "";

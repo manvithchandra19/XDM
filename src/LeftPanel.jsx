@@ -10,9 +10,9 @@ import IconButton from '@material-ui/core/IconButton';
 import AddIcon from '@material-ui/icons/Add';
 // import TextField from "@material-ui/core/TextField";
 import DeleteIcon from '@material-ui/icons/Delete';
-import { addPropertyHandler, finalJsonOutput, getDefaultDefinitions, getDefaultJson, initialObject, plusHandler, updateValue, deleteProp } from "./xdm2";
+// import { addPropertyHandler, finalJsonOutput, getDefaultDefinitions, getDefaultJson, initialObject, plusHandler, updateValue, deleteProp } from "./xdm2";
 import { Dropdown } from 'primereact/dropdown';
-import { ActionButton, DialogTrigger, Flex, Text, TextField, AlertDialog } from '@adobe/react-spectrum'
+import { ActionButton, DialogTrigger, Flex, Text, TextField, AlertDialog,Picker, Item, Section } from '@adobe/react-spectrum'
 import './Dropdown.css';
 import DeleteOutline from "@spectrum-icons/workflow/DeleteOutline";
 import Minimize from "@spectrum-icons/workflow/Minimize";
@@ -70,17 +70,7 @@ const LeftPanel = (props) => {
         { name: 'record' },
         { name: 'timeseries' }
     ];
-    const onClassChange = (e) => {
-        console.log(e.value.name);
-        setClassName(e.value);
-        props.setbehaviour(e.value.name)
-    }
-
-    const onmixinChange = (e) => {
-        setMixinBehaviour(e.value);
-        props.setbehaviour(e.value.name)
-    }
-
+   
     const renderHighLevelProperty1 = (val, i, plusProperty,mainIndex) => {
         console.log("Object Key =====" + i);
         const objKey = Object.keys(val)[0];
@@ -97,27 +87,27 @@ const LeftPanel = (props) => {
                 <Fab size="small" aria-label="Add" className={classes.margin} onClick={props.plusHandlerFactory(i,mainIndex)}>
                     <AddIcon />
                 </Fab>
-                <TextField InputProps={{ className: classes.input }} InputLabelProps={{ shrink: true }}
+                <TextField InputProps={{ className: classes.input }}  width= '120px' InputLabelProps={{ shrink: true }}
                     id="outlined-basic" label="Property Namespace" variant="outlined" name="propertyNamespace"
                     defaultValue=''//value={keyValues[0]}
                     onChange={props.updateHandlerFactory("keyT", i)} />
-                <TextField InputProps={{ className: classes.input }} InputLabelProps={{ shrink: true }}
+                <TextField InputProps={{ className: classes.input }}  width= '90px' InputLabelProps={{ shrink: true }}
                     id="outlined-basic" label="Property Name" variant="outlined" name="propertyName"
                     value={keyValues[1]}
                     onChange={props.updateHandlerFactory("keyN", i)} />
-                <TextField InputProps={{ className: classes.input }} InputLabelProps={{ shrink: true }}
+                <TextField InputProps={{ className: classes.input }}  width= '90px' InputLabelProps={{ shrink: true }}
                     id="outlined-basic" label="Property Title" variant="outlined" name="propertyTitle"
                     value={objVal.title}
                     onChange={props.updateHandlerFactory("title", i)} />
-                <TextField InputProps={{ className: classes.input }} InputLabelProps={{ shrink: true }}
+                <TextField InputProps={{ className: classes.input }}  width= '120px' InputLabelProps={{ shrink: true }}
                     id="outlined-basic" label="Property Data Type" variant="outlined" name="propertyType"
                     value={objVal.type}
                     onChange={props.updateHandlerFactory("type", i)} />
-                <TextField InputProps={{ className: classes.input }} InputLabelProps={{ shrink: true }}
+                <TextField InputProps={{ className: classes.input }}  width= '120px' InputLabelProps={{ shrink: true }}
                     id="outlined-basic" label="Property Description" variant="outlined" name="propertyDescription"
                     value={objVal.description}
                     onChange={props.updateHandlerFactory("description", i)} />
-                     <TextField InputProps={{ className: classes.input }} InputLabelProps={{ shrink: true }}
+                     <TextField InputProps={{ className: classes.input }}  width= '80px' InputLabelProps={{ shrink: true }}
                     id="outlined-basic" label="examples" variant="outlined" name="examples"
                     value={objVal.examples}
                     onChange={props.updateHandlerFactory("examples", i)} />
@@ -173,6 +163,7 @@ const LeftPanel = (props) => {
                             margin: '20px',
                             padding: '10px'
                         }}>
+                         
                         <Flex justifyContent="end">
                             <ActionButton width="size-115" marginEnd="size-10"
                                 onPress={() => props.onWindowAction(false, index)}
@@ -232,7 +223,7 @@ const LeftPanel = (props) => {
                                 label={obj.type === "class" ? "Class Name" : obj.type === "mixin" ? "Mixin Name" : "Datatype Name"}
                                 name="schemaName"
                                 id="schemaName"
-                                style ={{width: '50'}}
+                                width= '100px'
                                 type="text"
                                 variant="filled"
                                 defaultValue=''
@@ -243,6 +234,7 @@ const LeftPanel = (props) => {
                                 name="schemaTitle"
                                 label={obj.type === "class" ? "Class Title" : obj.type === "mixin" ? "Mixin Title" : "Datatype Title"}
                                 variant="filled"
+                                width= '100px'
                                 defaultValue={obj.jsonData.key}
                                 onChange={(e) => props.onJRTESTChange(e, index, "schemaTitle")} />
 
@@ -250,29 +242,38 @@ const LeftPanel = (props) => {
                                 name="schemaDescription"
                                 label={obj.type === "class" ? "Class Description" : obj.type === "mixin" ? "Mixin Description" : "Datatype Description"}
                                 variant="filled"
+                                width= '100px'
                                 defaultValue={obj.jsonData.key}
                                 onChange={(e) => props.onJRTESTChange(e, index, "schemaDescription")} />
 
                             {obj.type === "mixin" ?
-                                <div className="dropdown-demo" >
-                                    <Dropdown value={className}
-                                        options={classess}
-                                        onChange={onClassChange}
-                                        optionLabel="name"
-                                        placeholder="Class Name" />
-                                    <br /><br />
-                                </div> : null}
-                            {obj.type === "class" ?
-                                <div className="dropdown-demo" style={{ marginLeft: 10 }}>
-                                    <Dropdown value={mixinBehaviour}
-                                        options={behaviourVal}
-                                        onChange={onmixinChange}
-                                        optionLabel="name"
-                                        placeholder="Behaviour" />
-                                    <br /><br />
-                                </div> : null}
+                            <Picker  width= '160px' onSelectionChange={(e,index) => props.onmixinChange(e,index)} label="CLass Name">
+                            <Item key="profile">Profile</Item>
+                            <Item key="experience event">Experience event</Item>
+                            <Item key="product">Product</Item>
+                          </Picker>: null}
 
+                            {obj.type === "class" ?
+                            <Picker  width= '120px'  marginTop = '10px' onSelectionChange={(e,index) => props.onClassChange(e,index)} label="Behaviour">
+                            <Item key="record">Record</Item>
+                            <Item key="timeseries">Timeseries</Item>
+                          </Picker>
+                           
+                                // <div className="dropdown-demo" style={{ marginLeft: 10 }}>
+                                //     <Dropdown value={mixinBehaviour}
+                                //         options={behaviourVal}
+                                //         onChange={onmixinChange}
+                                //         optionLabel="name"
+                                //         placeholder="Behaviour" />
+                                //    
+                                // </div> 
+                                : null}
+<Picker  width= '120px'  marginTop = '10px' onSelectionChange={(e) => props.onMetaStatusChange(e)} label="Meta STatus">
+                           <Item key="experimental">Experimental</Item>
+                           <Item key="stable">Stable</Item>
+                         </Picker>
                         </div>
+                        <br />
                         <div style={{ marginLeft: '2.25rem' }}>
                             <Button variant="contained" onClick={(e) => props.addDynamicPropertyRow(index)} >Add Property</Button>
 
@@ -280,7 +281,7 @@ const LeftPanel = (props) => {
                             <table>
                                 <tbody>
                                     <tr>
-                                       {obj.jsonData.class.definitions.CLAZZ.properties.map((val,index1) => {
+                                       {obj.jsonData.class.definitions.definitionName.properties.map((val,index1) => {
                                           return  (renderHighLevelProperty1(val, index1, false,index))
                                         } )}
                                       
@@ -289,7 +290,6 @@ const LeftPanel = (props) => {
                             </table>
                         </div>
                     </div>
-
                 }
 
             })}

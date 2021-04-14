@@ -74,12 +74,21 @@ const RightPanel = (props) => {
     useEffect(() => {
         if (props.jsonData) {
             // console.log('RIGHTPANEL', props.jsonData)
-        const copy = JSON.parse(JSON.stringify(props.jsonData));
-        setJsonData(copy)
+       
+        let jsonString = JSON.stringify(props.jsonData)
+    console.log(jsonString);
+    jsonString = jsonString.replace("definitionName",props.schemaName)
+    if (props.type === 'mixin'){
+        jsonString = jsonString.replace("meta:extends", "meta:intendedToExtend")
+    }
+    const copy = JSON.parse(jsonString);
+    setJsonData(copy)
         } else {
             setJsonData(undefined)
         }
-    }, [props.jsonData])
+    }, [props.jsonData]) 
+
+    
 
     return (<div style={{display: 'flex', flexDirection: 'column', width: '100%', margin: '5px'}}>
         <div style={{position: 'absolute', right: '30px', bottom: '10px', margin: '10px', zIndex: '10'}}>

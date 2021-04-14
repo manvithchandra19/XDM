@@ -26,12 +26,16 @@ const baseObject = {
 
     "meta:extensible": true, // ALL ARE TRUE EXCEPT WHEN USER SELECTS SCHEMA
     "meta:abstract": true, // ALL ARE TRUE EXCEPT SELECTS SCHEMA
+    "meta:extends": [
+        "https://ns.genesis.com/xdm//"
+      ],
     "description" : "",
-    "definitions": {"CLAZZ": { //defination name
+   
+    "definitions": {"definitionName": { //defination name
         "properties": []
     }},
-    "allOf": [],
-    "meta:status": "experimental"
+    // "allOf": [],
+    "meta:Status": "experimental"
 }
 
 
@@ -46,11 +50,11 @@ const Schema2 = () => {
     ];
     
     // const [_schemaType, setschemaType] = useState('Class')
-    // const [schemaName, setschemaName] = useState('');
+    const [schemaName, setschemaName] = useState('');
     // const [schemaTitle, setschemaTitle] = useState('');
     // const [schemadescription, setDescription] = useState('');
     // const [metaStatus, setmetastatus] = useState('');
-    // const [behaviour, setbehaviour] = useState('');
+    const [behaviour, setbehaviour] = useState('');
     // const [clazzName, setClazzName] = useState('');
 
     const [currentIndex , setCurrentIndex] = useState(0);
@@ -75,7 +79,6 @@ const Schema2 = () => {
         const newDefinitions = updateValue(definationCopy, objKey, changingProp, e); //calling functionto update
         // setDefinitions({ "CLAZZ": newDefinitions.CLAZZ });
          definationCopy = newDefinitions
-        // setDefinitions(getDefaultDefinitions())
         if (keyobj.includes(".")){
             const keysArr = objKey.split("."); 
             activeSchemaCopy.jsonData.class.definitions = definationCopy
@@ -200,6 +203,32 @@ const Schema2 = () => {
 
      }
 
+     const onClassChange = (e,index) => {
+        // console.log(e.value.name);
+        // setClassName(e.value);
+        const schemaObjectsCopy = JSON.parse(JSON.stringify(schemaObjects));
+        schemaObjectsCopy[currentIndex].jsonData.class["meta:extends"] = `https://ns.genesis.com/xdm/${schemaName}/${e}`
+        setbehaviour(e)
+        
+        setSchemaObjects(schemaObjectsCopy);
+    }
+
+    const onmixinChange = (e,index) => {
+        // setMixinBehaviour(e.value);
+        const schemaObjectsCopy = JSON.parse(JSON.stringify(schemaObjects));
+        schemaObjectsCopy[currentIndex].jsonData.class["meta:extends"] = `https://ns.genesis.com/xdm/${schemaName}/${e}`
+        setbehaviour(e)
+        setSchemaObjects(schemaObjectsCopy);
+    }
+
+    const onMetaStatusChange = (e) => {
+        // setMixinBehaviour(e.value);
+        const schemaObjectsCopy = JSON.parse(JSON.stringify(schemaObjects));
+        schemaObjectsCopy[currentIndex].jsonData.class["meta:Status"] = e
+        
+        setSchemaObjects(schemaObjectsCopy);
+    }
+
 //handling input for name, title
     const onJRTESTChangeHandler = (e,index,name) => {
         console.log("name",e);
@@ -209,12 +238,13 @@ const Schema2 = () => {
         setCurrentIndex(index)
         switch (name) {
             case "schemaName":
-                // setschemaName(e);
-                activeSchemaCopy.jsonData.class.$id = `https://ns.adobe.com/xdm/Class/${e}`
+                setschemaName(e);
+                // activeSchemaCopy.jsonData.class.$id = `https://ns.adobe.com/xdm/Class/${e}`
                 schemaObjectsCopy[index].jsonData.class.$id = `https://ns.adobe.com/xdm/Class/${e}`;
-               
-                activeSchemaCopy.jsonData.class.allOf = [{'$ref':`#/definitions/${e}`}];
-                schemaObjectsCopy[index].jsonData.class.allOf =[{'$ref':`#/definitions/${e}`}];
+                schemaObjectsCopy[currentIndex].jsonData.class["meta:extends"] = `https://ns.genesis.com/xdm/${e}/${behaviour}`
+                // activeSchemaCopy.jsonData.class.allOf = [{'$ref':`#/definitions/${e}`}];
+                // schemaObjectsCopy[index].jsonData.class.allOf =[{'$ref':`#/definitions/${e}`}];
+                
                 
                 break;
                 case "schemaTitle":
@@ -229,10 +259,10 @@ const Schema2 = () => {
                 break;
                 
         }
-        console.log('COPY', activeSchemaCopy);
+        // console.log('COPY', activeSchemaCopy);
         console.log('activeSchema', activeSchema)
         
-        setActiveSchema(activeSchemaCopy);
+        // setActiveSchema(activeSchemaCopy);
         setSchemaObjects(schemaObjectsCopy);
     }
 
@@ -254,11 +284,11 @@ const Schema2 = () => {
         let schemaObjectsCP = JSON.parse(JSON.stringify(schemaObjects));
         if (schemaObjectsCP.length !== 0){
             const latestIndex = schemaObjectsCP.length + 1
-            setCurrentIndex(latestIndex)
+            setCurrentIndex(latestIndex-1)
         }else{
             setCurrentIndex(0)
         }
-        
+        console.log(currentIndex );
         switch (type) {
             case 'class':
                 const classSchema = {type: 'class', minimized: false, jsonData: {class:baseObject} 
@@ -274,6 +304,7 @@ const Schema2 = () => {
                 setActiveSchema(mixinSchema)
                 schemaObjectsCP.push(mixinSchema);
                 setSchemaObjects(schemaObjectsCP);
+                console.log(schemaObjects);
                 break;
             // case 'dataType':
             //     const dataTypeSchema = {type: 'dataType', minimized: false,  jsonData: {class:baseObject } 
@@ -318,13 +349,16 @@ const Schema2 = () => {
                      deleteSchema={(index) => onDeleteSchema(index)}
                     //  schemaDescription = {schemadescription}
                     //  schemaTitle = {schemaTitle}
-                    //  behaviour = {behaviour}
+                     behaviour = {behaviour}
                      updateHandlerFactory = {updateHandlerFactory}
                      addDynamicPropertyRow = {(index)=>addDynamicPropertyRow(index)}
                     //  definitions = {definitions}
                      plusHandlerFactory = {plusHandlerFactory}
+                     onClassChange = {(e,index) => onClassChange(e,index)}
+                     onmixinChange = {(e,index) => onmixinChange(e,index)}
                      deleteProperty = {deleteProperty}
                      currentIndex = {(index) => setCurrentIndex(index)}
+                     onMetaStatusChange = {(e)=> onMetaStatusChange(e)}
                      setActiveSchema={(index) => setActiveSchema(schemaObjects[index])}
 
                    />
@@ -332,7 +366,9 @@ const Schema2 = () => {
                 </SplitterPanel>
                 <SplitterPanel>
                     {/* {console.log('ACTIVESCHEMA', activeSchema?.jsonData ?? undefined)} */}
-                    <RightPanel jsonData={schemaObjects[currentIndex]?.jsonData.class ?? undefined}/>
+                    <RightPanel jsonData={schemaObjects[currentIndex]?.jsonData.class ?? undefined}
+                    schemaName = {schemaName}
+                    type = {schemaObjects[currentIndex]?.type ?? ""}/>
                 </SplitterPanel>
             </Splitter>
 
