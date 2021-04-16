@@ -55,8 +55,9 @@ export let finalJsonOutput = (jsonObject , params) => {
 }
 
 export let addPropertyHandler = (jsonObject) => {
-    console.log("json changed");
-    jsonObject.definitionName.properties.push({
+    console.log("json changed",jsonObject);
+    const propertiesVal = getFirstValueFromMap(jsonObject)
+    propertiesVal.properties.push({
         ':': {
             'title' : "",
             'type' : "",
@@ -102,7 +103,8 @@ export let  plusHandler = (jsonObject,objectkey) => {
 }
 
 export let updateValue = (jsonObject , objectkey , changingProp, val) => {
-    let expectedProperty = jsonObject.definitionName;
+    const propertiesVal = getFirstValueFromMap(jsonObject)
+    let expectedProperty = propertiesVal;
     objectkey = objectkey + "";
     const keysArr = objectkey.split(".");
     expectedProperty = expectedProperty.properties[keysArr[0]];

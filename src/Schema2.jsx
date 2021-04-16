@@ -32,7 +32,7 @@ const baseObject = {
     "definitions": {"definitionName": { //defination name
         "properties": []
     }},
-    // "allOf": [],
+    "allOf": [],
     "meta:Status": "experimental"
 }
 
@@ -241,7 +241,7 @@ const Schema2 = () => {
                 schemaObjectsCopy[index].jsonData.class.$id = `https://ns.adobe.com/xdm/Class/${e}`;
                 schemaObjectsCopy[currentIndex].jsonData.class["meta:extends"] = `https://ns.genesis.com/xdm/${e}/${behaviour}`
                 // activeSchemaCopy.jsonData.class.allOf = [{'$ref':`#/definitions/${e}`}];
-                // schemaObjectsCopy[index].jsonData.class.allOf =[{'$ref':`#/definitions/${e}`}];
+                schemaObjectsCopy[index].jsonData.class.allOf =[{'$ref':`#/definitions/${e}`}];
                 
                 
                 break;
@@ -264,6 +264,11 @@ const Schema2 = () => {
         setSchemaObjects(schemaObjectsCopy);
     }
 
+    const getobjectfromJson = (e) => {
+        const schemaObjectsCopy = JSON.parse(JSON.stringify(schemaObjects));
+        schemaObjectsCopy[currentIndex].jsonData.class = e;
+        setSchemaObjects(schemaObjectsCopy);
+    }
 
     const onWindowAction = (isMinimized, index) => {
         console.log('HERE', isMinimized, index)
@@ -356,7 +361,9 @@ const Schema2 = () => {
                      onmixinChange = {(e,index) => onmixinChange(e,index)}
                      deleteProperty = {deleteProperty}
                      currentIndex = {(index) => setCurrentIndex(index)}
+                     schemaName = {schemaName}
                      onMetaStatusChange = {(e)=> onMetaStatusChange(e)}
+                     setschemaName = {(e) => setschemaName(e)}
                      setActiveSchema={(index) => setActiveSchema(schemaObjects[index])}
 
                    />
@@ -365,6 +372,7 @@ const Schema2 = () => {
                 <SplitterPanel size={22}>
                     {/* {console.log('ACTIVESCHEMA', activeSchema?.jsonData ?? undefined)} */}
                     <RightPanel jsonData={schemaObjects[currentIndex]?.jsonData.class ?? undefined}
+                    getobjectfromJson = {(e) => getobjectfromJson(e)}
                     schemaName = {schemaName}
                     type = {schemaObjects[currentIndex]?.type ?? ""}/>
                 </SplitterPanel>

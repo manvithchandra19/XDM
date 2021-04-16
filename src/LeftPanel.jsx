@@ -3,60 +3,55 @@ import 'primeicons/primeicons.css';
 import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.css';
 import 'bootstrap/dist/css/bootstrap.css';
-import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import Fab from '@material-ui/core/Fab';
-import IconButton from '@material-ui/core/IconButton';
-import AddIcon from '@material-ui/icons/Add';
-// import TextField from "@material-ui/core/TextField";
-import DeleteIcon from '@material-ui/icons/Delete';
-// import { addPropertyHandler, finalJsonOutput, getDefaultDefinitions, getDefaultJson, initialObject, plusHandler, updateValue, deleteProp } from "./xdm2";
-import { Dropdown } from 'primereact/dropdown';
+import IconAdd from '@spectrum-icons/workflow/Add';
+import Delete from '@spectrum-icons/workflow/Delete';
+
+import {Button} from '@adobe/react-spectrum'
+import {  getFirstValueFromMap,getFirstKeyFromMap } from "./xdm2";
 import { ActionButton, DialogTrigger, Flex, Text, TextField, AlertDialog,Picker, Item, Section } from '@adobe/react-spectrum'
 import './Dropdown.css';
 import DeleteOutline from "@spectrum-icons/workflow/DeleteOutline";
 import Minimize from "@spectrum-icons/workflow/Minimize";
 import Maximize from "@spectrum-icons/workflow/Maximize";
-import AutosizeInput from 'react-input-autosize';
 
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        flexGrow: 1,
-        "& .MuiTextField-root": {
-            margin: theme.spacing(1),
-            width: 167
-        }
-    },
-    paper: {
-        padding: theme.spacing(2),
-        textAlign: 'center',
-        color: theme.palette.text.secondary,
-    },
+// const useStyles = makeStyles((theme) => ({
+//     root: {
+//         flexGrow: 1,
+//         "& .MuiTextField-root": {
+//             margin: theme.spacing(1),
+//             width: 167
+//         }
+//     },
+//     paper: {
+//         padding: theme.spacing(2),
+//         textAlign: 'center',
+//         color: theme.palette.text.secondary,
+//     },
 
-    button: {
-        margin: theme.spacing.unit,
-        width: 50,
-    },
-    input: {
-        // display: 'none',
-        height: 28,
-        width:80
-    },
+//     button: {
+//         margin: theme.spacing.unit,
+//         width: 50,
+//     },
+//     input: {
+//         // display: 'none',
+//         height: 28,
+//         width:80
+//     },
 
-    formControl: {
-        margin: theme.spacing(1),
-        minWidth: 140,
-    },
-    selectEmpty: {
-        marginTop: theme.spacing(2),
-    },
-}));
+//     formControl: {
+//         margin: theme.spacing(1),
+//         minWidth: 140,
+//     },
+//     selectEmpty: {
+//         marginTop: theme.spacing(2),
+//     },
+// }));
 
 const LeftPanel = (props) => {
 
 
-    const classes = useStyles();
+    // const classes = useStyles();
 
     // const [className, setClassName] = useState("");
     // const [mixinBehaviour, setMixinBehaviour] = useState('');
@@ -79,43 +74,52 @@ const LeftPanel = (props) => {
         const keyValues = objKey.split(":");
         let nestedValues = [];
         if (objVal.type == "object") {
-            for (let i2 = 0; i2 < objVal.properties.length; i2++)
+            if (objVal.hasOwnProperty("properties")){
+                for (let i2 = 0; i2 < objVal.properties.length; i2++)
                 nestedValues.push(renderHighLevelProperty1(objVal.properties[i2], i + "." + i2, true,mainIndex));
+            }
+            
         }
         return (
             <div style={{ marginLeft: '2.25rem' }}>
                 {plusProperty ? <span style={{ marginLeft: '2.25rem' }} ></span> : null}
-                <Fab size="small" aria-label="Add" className={classes.margin} onClick={props.plusHandlerFactory(i,mainIndex)}>
+                {/* <Fab size="small" aria-label="Add" className={classes.margin} onClick={props.plusHandlerFactory(i,mainIndex)}>
                     <AddIcon />
-                </Fab>
-                <TextField InputProps={{ className: classes.input }}  width= '120px' InputLabelProps={{ shrink: true }}
-                    id="outlined-basic" label="Property Namespace" variant="outlined" name="propertyNamespace"
+                </Fab> */}
+                <Button onClick={props.plusHandlerFactory(i,mainIndex)} width = '10px'><IconAdd/></Button>
+                {/* InputProps={{ className: classes.input }} */}
+                {/* <Button icon="pi pi-check" onClick={props.plusHandlerFactory(i,mainIndex)}/> */}
+                <TextField   width= '160px'
+                    id="outlined-basic"  variant="outlined" name="propertyNamespace" placeholder = "Property Namespace"
                     defaultValue=''//value={keyValues[0]}
+                    value={keyValues[0]}
                     onChange={props.updateHandlerFactory("keyT", i)} />
-                <TextField InputProps={{ className: classes.input }}  width= '90px' InputLabelProps={{ shrink: true }}
-                    id="outlined-basic" label="Property Name" variant="outlined" name="propertyName"
+                <TextField   width= '120px' 
+                    id="outlined-basic" placeholder="Property Name" variant="outlined" name="propertyName"
                     value={keyValues[1]}
                     onChange={props.updateHandlerFactory("keyN", i)} />
-                <TextField InputProps={{ className: classes.input }}  width= '90px' InputLabelProps={{ shrink: true }}
-                    id="outlined-basic" label="Property Title" variant="outlined" name="propertyTitle"
+                <TextField  width= '120px' 
+                    id="outlined-basic" placeholder="Property Title" variant="outlined" name="propertyTitle"
                     value={objVal.title}
                     onChange={props.updateHandlerFactory("title", i)} />
-                <TextField InputProps={{ className: classes.input }}  width= '120px' InputLabelProps={{ shrink: true }}
-                    id="outlined-basic" label="Property Data Type" variant="outlined" name="propertyType"
+                <TextField   width= '150px' 
+                    id="outlined-basic" placeholder="Property Data Type" variant="outlined" name="propertyType"
                     value={objVal.type}
                     onChange={props.updateHandlerFactory("type", i)} />
-                <TextField InputProps={{ className: classes.input }}  width= '120px' InputLabelProps={{ shrink: true }}
-                    id="outlined-basic" label="Property Description" variant="outlined" name="propertyDescription"
+                <TextField  width= '150px'
+                    id="outlined-basic" placeholder="Property Description" variant="outlined" name="propertyDescription"
                     value={objVal.description}
                     onChange={props.updateHandlerFactory("description", i)} />
-                     <TextField InputProps={{ className: classes.input }}  width= '80px' InputLabelProps={{ shrink: true }}
-                    id="outlined-basic" label="examples" variant="outlined" name="examples"
+                     <TextField width= '100px' 
+                    id="outlined-basic" placeholder ="examples" variant="outlined" name="examples"
                     value={objVal.examples}
                     onChange={props.updateHandlerFactory("examples", i)} />
-                <IconButton style={{ width: '50px' }} aria-label="Delete" className={classes.margin}
-                    onClick={clickDeleteFunction( i,mainIndex)}>
-                    <DeleteIcon fontSize="small" />
-                </IconButton>
+                     <Button  onClick={clickDeleteFunction( i,mainIndex)} width = '10px'><Delete/></Button>
+                     <br/><br/>
+                {/* <IconButton style={{ width: '50px' }} aria-label="Delete" className={classes.margin}
+                   > */}
+                    {/* <DeleteIcon fontSize="small" />
+                </IconButton> */}
                 {nestedValues.map((nv, ni) => {
                     console.log("nv", ni);
                     return nv
@@ -144,14 +148,16 @@ const LeftPanel = (props) => {
         let schemaname = obj.jsonData.class.$id
         let val = schemaname.split('/');
        schemaname = val[val.length-1]
+       props.setschemaName(schemaname)
      return    <TextField
-        label={obj.type === "class" ? "Class Name" : obj.type === "mixin" ? "Mixin Name" : "Datatype Name"}
+     placeholder={obj.type === "class" ? "Class Name" : obj.type === "mixin" ? "Mixin Name" : "Datatype Name"}
         name="schemaName"
         id="schemaName"
         width= '100px'
         type="text"
         variant="filled"
         defaultValue={schemaname}
+        value = {schemaname}
         onChange={(e) => props.onJRTESTChange(e, index, "schemaName")}
     /> 
     }
@@ -161,11 +167,12 @@ const LeftPanel = (props) => {
         <div style={{  display: 'flex',flexDirection: 'column-reverse', overflow: 'scroll' }}>
 
             {props.schemas.map((obj, index) => {
-                console.log('SCHEMAMAP', obj.jsonData)
+                console.log('SCHEMAMAP', obj.jsonData.class.title)
             console.log("index === ",index);
             //    props.currentIndex(index)
                 //  console.log(val)
-                   
+                   const propertiesVal = getFirstValueFromMap(obj.jsonData.class.definitions)
+                   console.log("propertiessss",propertiesVal);
                 if (obj.minimized) {
                     return <div
                     onClick={clickFunction(index)}
@@ -244,29 +251,31 @@ const LeftPanel = (props) => {
                             {schemaNameTextfield(obj,index)}
                             <TextField
                                 name="schemaTitle"
-                                label={obj.type === "class" ? "Class Title" : obj.type === "mixin" ? "Mixin Title" : "Datatype Title"}
+                                placeholder={obj.type === "class" ? "Class Title" : obj.type === "mixin" ? "Mixin Title" : "Datatype Title"}
                                 variant="filled"
                                 width= '100px'
-                                defaultValue={obj.jsonData.key}
+                                defaultValue={obj.jsonData.class.title}
+                                value = {obj.jsonData.class.title}
                                 onChange={(e) => props.onJRTESTChange(e, index, "schemaTitle")} />
 
                             <TextField
                                 name="schemaDescription"
-                                label={obj.type === "class" ? "Class Description" : obj.type === "mixin" ? "Mixin Description" : "Datatype Description"}
+                                placeholder={obj.type === "class" ? "Class Description" : obj.type === "mixin" ? "Mixin Description" : "Datatype Description"}
                                 variant="filled"
-                                width= '100px'
-                                defaultValue={obj.jsonData.key}
+                                width= '130px'
+                                defaultValue={obj.jsonData.class.description}
+                                value = {obj.jsonData.class.description}
                                 onChange={(e) => props.onJRTESTChange(e, index, "schemaDescription")} />
 
                             {obj.type === "mixin" ?
-                            <Picker  width= '160px' onSelectionChange={(e,index) => props.onmixinChange(e,index)} label="CLass Name">
+                            <Picker  width= '160px' onSelectionChange={(e,index) => props.onmixinChange(e,index)} placeholder ="CLass Name">
                             <Item key="profile">Profile</Item>
                             <Item key="experience event">Experience event</Item>
                             <Item key="product">Product</Item>
                           </Picker>: null}
 
                             {obj.type === "class" ?
-                            <Picker  width= '120px'  marginTop = '10px' onSelectionChange={(e,index) => props.onClassChange(e,index)} label="Behaviour">
+                            <Picker  width= '120px'  marginTop = '10px' onSelectionChange={(e,index) => props.onClassChange(e,index)} placeholder="Behaviour">
                             <Item key="record">Record</Item>
                             <Item key="timeseries">Timeseries</Item>
                           </Picker>
@@ -280,7 +289,7 @@ const LeftPanel = (props) => {
                                 //    
                                 // </div> 
                                 : null}
-<Picker  width= '130px'  marginTop = '10px' onSelectionChange={(e) => props.onMetaStatusChange(e)} label="Meta Status">
+<Picker  width= '130px'  marginTop = '10px' onSelectionChange={(e) => props.onMetaStatusChange(e)} placeholder="Meta Status">
                            <Item key="experimental">Experimental</Item>
                            <Item key="stable">Stable</Item>
                          </Picker>
@@ -293,7 +302,7 @@ const LeftPanel = (props) => {
                             <table>
                                 <tbody>
                                     <tr>
-                                       {obj.jsonData.class.definitions.definitionName.properties.map((val,index1) => {
+                                       {propertiesVal.properties.map((val,index1) => {
                                           return  (renderHighLevelProperty1(val, index1, false,index))
                                         } )}
                                       

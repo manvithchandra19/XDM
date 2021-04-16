@@ -13,7 +13,6 @@ import { Header, Divider, Content, Form, Footer, Checkbox, ButtonGroup, Text, Te
 import Alias from '@spectrum-icons/workflow/Alias';
 import Minimize from "@spectrum-icons/workflow/Minimize";
 import Maximize from "@spectrum-icons/workflow/Maximize";
-import color from 'material-ui/colors/amber';
 
 
 
@@ -93,6 +92,24 @@ const RightPanel = (props) => {
         setMinimized(val)
     }
     
+    function IsValidJSONString(str) {
+        try {
+            JSON.parse(JSON.stringify(str));
+        } catch (e) {
+            return false;
+        }
+        return true;
+    }
+
+    const onChangeJson = (e)  => {
+        const validjson = IsValidJSONString(e)
+        
+            if (validjson){
+              return  props.getobjectfromJson(e)
+            }
+        
+          
+    }
 
     return (
        <div style={{display: 'flex', flexDirection: 'column', width: '100%', margin: '5px' ,backgroundColor : '#1E1E1E' }}>
@@ -154,13 +171,13 @@ const RightPanel = (props) => {
         </div>
         <JSONInput
             id="panel1"
-            placeholder={  {"gg":"nn"}} // data to display
+            placeholder={ jsonData ??  {}} // data to display
             locale={locale}
             confirmGood={false}
-            reset={true}
+            // reset={true}
             width="100%"
             height="100%"
-            onChange = {(e) => console.log(e)}
+            onChange = {(e) => onChangeJson(e.jsObject)}
             colors={{
                 string: "#DAA520" // overrides theme colors with whatever color value you want
             }}

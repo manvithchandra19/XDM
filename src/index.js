@@ -5,7 +5,6 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {Provider, defaultTheme} from '@adobe/react-spectrum';
 
-
 ReactDOM.render(
   <React.StrictMode>
     <Provider theme={defaultTheme} colorScheme="light">
