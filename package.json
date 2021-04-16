@@ -36,6 +36,7 @@
     "react-edit-button": "^1.0.2",
     "react-edit-text": "^4.0.1",
     "react-editext": "^3.17.2",
+    "react-input-autosize": "^3.0.0",
     "react-json-editor-ajrm": "^2.5.13",
     "react-scripts": "4.0.2",
     "reactstrap": "^8.9.0",

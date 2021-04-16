@@ -14,10 +14,8 @@ import { ActionButton } from '@react-spectrum/button';
 const baseObject = {
     "meta:license": [
         "Copyright 2020 Adobe Systems Incorporated. All rights reserved.",
-        "This work is licensed under a Creative Commons Attribution 4.0",
-        " International (CC BY 4.0) license",
-        "you may not use this file except in compliance with the License. You may obtain a copy",
-        "of the License at https://creativecommons.org/licenses/by/4.0/"
+        "This work is licensed under a Creative Commons Attribution 4.0 International (CC BY 4.0) license",
+        "you may not use this file except in compliance with the License. You may obtain a copy of the License at https://creativecommons.org/licenses/by/4.0/"
     ],
     "$id": "https://ns.adobe.com/xdm/classes/",
     "$schema": "http://json-schema.org/draft-06/schema#",
@@ -342,7 +340,7 @@ const Schema2 = () => {
 
             {/* Left and Right Splitter Pane */}
             <Splitter style={{height: '100%', width: '100%'}} layout="horizontal">
-                <SplitterPanel >
+                <SplitterPanel  >
                     <LeftPanel   onWindowAction={(type, index) => onWindowAction(type, index)}
                      onJRTESTChange={(e, index,name) => onJRTESTChangeHandler(e, index,name)}
                      schemas={schemaObjects} 
@@ -364,7 +362,7 @@ const Schema2 = () => {
                    />
 
                 </SplitterPanel>
-                <SplitterPanel>
+                <SplitterPanel size={22}>
                     {/* {console.log('ACTIVESCHEMA', activeSchema?.jsonData ?? undefined)} */}
                     <RightPanel jsonData={schemaObjects[currentIndex]?.jsonData.class ?? undefined}
                     schemaName = {schemaName}

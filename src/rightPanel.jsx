@@ -11,9 +11,9 @@ import { Flex } from '@react-spectrum/layout';
 import { Link } from '@react-spectrum/link';
 import { Header, Divider, Content, Form, Footer, Checkbox, ButtonGroup, Text, TextField} from '@adobe/react-spectrum'
 import Alias from '@spectrum-icons/workflow/Alias';
-// import Button from '@material-ui/core/Button';
-// import { Button } from '@react-spectrum';
-// import {useDialogContainer} from '@adobe/react-spectrum';
+import Minimize from "@spectrum-icons/workflow/Minimize";
+import Maximize from "@spectrum-icons/workflow/Maximize";
+import color from 'material-ui/colors/amber';
 
 
 
@@ -21,8 +21,9 @@ const RightPanel = (props) => {
 
     // console.log('RIGHTPANEL', props)
     const [jsonData, setJsonData] = useState({});
-    const [schemaName, setschemaName] = useState('');
-    const [definitions, setDefinitions] = useState(getDefaultDefinitions());
+    const [minimized , setMinimized] = useState(false)
+    // const [schemaName, setschemaName] = useState('');
+    // const [definitions, setDefinitions] = useState(getDefaultDefinitions());
 
     const [prTitle, setPrTitle] = useState("");
     const [prBody, setPrBody] = useState("");
@@ -75,25 +76,35 @@ const RightPanel = (props) => {
         if (props.jsonData) {
             // console.log('RIGHTPANEL', props.jsonData)
        
-        let jsonString = JSON.stringify(props.jsonData)
-    console.log(jsonString);
-    jsonString = jsonString.replace("definitionName",props.schemaName)
-    if (props.type === 'mixin'){
-        jsonString = jsonString.replace("meta:extends", "meta:intendedToExtend")
-    }
-    const copy = JSON.parse(jsonString);
-    setJsonData(copy)
+            let jsonString = JSON.stringify(props.jsonData)
+            console.log(jsonString);
+            jsonString = jsonString.replace("definitionName",props.schemaName)
+            if (props.type === 'mixin'){
+                jsonString = jsonString.replace("meta:extends", "meta:intendedToExtend")
+            }
+            const copy = JSON.parse(jsonString);
+            setJsonData(copy)
         } else {
             setJsonData(undefined)
         }
     }, [props.jsonData]) 
 
+    const onWindowAction = (val) => {
+        setMinimized(val)
+    }
     
 
-    return (<div style={{display: 'flex', flexDirection: 'column', width: '100%', margin: '5px'}}>
+    return (
+       <div style={{display: 'flex', flexDirection: 'column', width: '100%', margin: '5px' ,backgroundColor : '#1E1E1E' }}>
+           {!minimized ? <div >
         <div style={{position: 'absolute', right: '30px', bottom: '10px', margin: '10px', zIndex: '10'}}>
-            
+        <ActionButton width="size-115" marginEnd="size-10"
+                                onPress={() => onWindowAction(true)}
+                            >
+                                <Minimize/>
+                            </ActionButton>
             <DialogTrigger>
+           
                 <ActionButton width="size-100"><Alias></Alias></ActionButton>
                 {(close) => (
                     <Dialog>
@@ -143,19 +154,27 @@ const RightPanel = (props) => {
         </div>
         <JSONInput
             id="panel1"
-            placeholder={jsonData ?? {}} // data to display
+            placeholder={  {"gg":"nn"}} // data to display
             locale={locale}
             confirmGood={false}
             reset={true}
             width="100%"
             height="100%"
+            onChange = {(e) => console.log(e)}
             colors={{
                 string: "#DAA520" // overrides theme colors with whatever color value you want
             }}
-            height="100%"
+            // height="100%"
         />
         
-    </div>)
+    </div> : <div> <ActionButton width="size-115" marginEnd="size-10"
+                                onPress={() => onWindowAction(false)}
+                            >
+                                <Maximize/>
+                                {/* <Maximize /> */}
+                            </ActionButton></div>}
+       </div>
+    )
 }
 
 export default RightPanel

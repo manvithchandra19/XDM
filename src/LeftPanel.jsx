@@ -17,6 +17,7 @@ import './Dropdown.css';
 import DeleteOutline from "@spectrum-icons/workflow/DeleteOutline";
 import Minimize from "@spectrum-icons/workflow/Minimize";
 import Maximize from "@spectrum-icons/workflow/Maximize";
+import AutosizeInput from 'react-input-autosize';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -57,19 +58,19 @@ const LeftPanel = (props) => {
 
     const classes = useStyles();
 
-    const [className, setClassName] = useState("");
-    const [mixinBehaviour, setMixinBehaviour] = useState('');
+    // const [className, setClassName] = useState("");
+    // const [mixinBehaviour, setMixinBehaviour] = useState('');
 
-    const classess = [
-        { name: 'profile' },
-        { name: 'experience event' },
-        { name: 'product' }
-    ];
+    // const classess = [
+    //     { name: 'profile' },
+    //     { name: 'experience event' },
+    //     { name: 'product' }
+    // ];
 
-    const behaviourVal = [
-        { name: 'record' },
-        { name: 'timeseries' }
-    ];
+    // const behaviourVal = [
+    //     { name: 'record' },
+    //     { name: 'timeseries' }
+    // ];
    
     const renderHighLevelProperty1 = (val, i, plusProperty,mainIndex) => {
         console.log("Object Key =====" + i);
@@ -139,7 +140,21 @@ const LeftPanel = (props) => {
         }
     }
    
-    
+    const schemaNameTextfield = (obj,index) => {
+        let schemaname = obj.jsonData.class.$id
+        let val = schemaname.split('/');
+       schemaname = val[val.length-1]
+     return    <TextField
+        label={obj.type === "class" ? "Class Name" : obj.type === "mixin" ? "Mixin Name" : "Datatype Name"}
+        name="schemaName"
+        id="schemaName"
+        width= '100px'
+        type="text"
+        variant="filled"
+        defaultValue={schemaname}
+        onChange={(e) => props.onJRTESTChange(e, index, "schemaName")}
+    /> 
+    }
 
 
     return (
@@ -150,6 +165,7 @@ const LeftPanel = (props) => {
             console.log("index === ",index);
             //    props.currentIndex(index)
                 //  console.log(val)
+                   
                 if (obj.minimized) {
                     return <div
                     onClick={clickFunction(index)}
@@ -163,7 +179,7 @@ const LeftPanel = (props) => {
                             margin: '20px',
                             padding: '10px'
                         }}>
-                         
+                         {schemaNameTextfield(obj,index)}
                         <Flex justifyContent="end">
                             <ActionButton width="size-115" marginEnd="size-10"
                                 onPress={() => props.onWindowAction(false, index)}
@@ -191,7 +207,7 @@ const LeftPanel = (props) => {
                         style={{
                             border: `5px solid ${obj.type === 'class' ? '#9498DC' : obj.type === 'mixin' ? '#B582A3' : '#D66D6C'}`,
                             height: '500px',
-                            minWidth: '800px',
+                            minWidth: '640px',
                             background: 'lightgrey',
                             borderRadius: '10px',
                             margin: '20px',
@@ -219,17 +235,13 @@ const LeftPanel = (props) => {
                         </Flex>
 
                         <div>
-                            <TextField
-                                label={obj.type === "class" ? "Class Name" : obj.type === "mixin" ? "Mixin Name" : "Datatype Name"}
-                                name="schemaName"
-                                id="schemaName"
-                                width= '100px'
-                                type="text"
-                                variant="filled"
-                                defaultValue=''
-                                onChange={(e) => props.onJRTESTChange(e, index, "schemaName")}
-                            />
-
+                        {/* <AutosizeInput
+	
+	defaultValue=''
+	onChange={(e) => props.onJRTESTChange(e.target.value, index, "schemaName")}
+/> */}
+                            
+                            {schemaNameTextfield(obj,index)}
                             <TextField
                                 name="schemaTitle"
                                 label={obj.type === "class" ? "Class Title" : obj.type === "mixin" ? "Mixin Title" : "Datatype Title"}
@@ -268,7 +280,7 @@ const LeftPanel = (props) => {
                                 //    
                                 // </div> 
                                 : null}
-<Picker  width= '120px'  marginTop = '10px' onSelectionChange={(e) => props.onMetaStatusChange(e)} label="Meta STatus">
+<Picker  width= '130px'  marginTop = '10px' onSelectionChange={(e) => props.onMetaStatusChange(e)} label="Meta Status">
                            <Item key="experimental">Experimental</Item>
                            <Item key="stable">Stable</Item>
                          </Picker>
