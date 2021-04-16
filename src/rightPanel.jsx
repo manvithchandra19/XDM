@@ -170,8 +170,8 @@ const RightPanel = (props) => {
         
         </div>
         <JSONInput
-            id="panel1"
-            placeholder={ jsonData ??  {}} // data to display
+            id="json-panel-1"
+            placeholder={ jsonData ?? {}} // data to display
             locale={locale}
             confirmGood={false}
             // reset={true}
