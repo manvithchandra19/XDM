@@ -21,7 +21,7 @@ const RightPanel = (props) => {
     // console.log('RIGHTPANEL', props)
     const [jsonData, setJsonData] = useState({});
     const [minimized , setMinimized] = useState(false)
-    // const [schemaName, setschemaName] = useState('');
+    const [schemaName, setschemaName] = useState('');
     // const [definitions, setDefinitions] = useState(getDefaultDefinitions());
 
     const [prTitle, setPrTitle] = useState("");
@@ -31,33 +31,37 @@ const RightPanel = (props) => {
 
     const { createPullRequest } = require("octokit-plugin-create-pull-request");
     const MyOctokit = Octokit.plugin(createPullRequest);
-    const TOKEN = "1d65d15095869a5ac1f31e985588438afe27e95e"; // create token at https://github.com/settings/tokens/new?scopes=repo
+    const TOKEN = "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"; // create token at https://github.com/settings/tokens/new?scopes=repo
     const octokit = new MyOctokit({
         auth: TOKEN,
     });
 
     const createPR = () => {
-        console.log(schemaName);
+        console.log(props.schemaName);
         console.log(prTitle);
         console.log(prBody);
         console.log(prBranch);
         console.log(prUsername);
+       //path = components/mixins/profile
+       
+    
+    
         octokit
             .createPullRequest({
                 owner: "manvithchandra19",
-                repo: "test1",
+                repo: "XDM1",
                 title: `${prTitle} Created by ${prUsername}`,
                 body: `${prBody} `,
-                base: "master" /* optional: defaults to default branch */,
+                base: "main" /* optional: defaults to default branch */,
                 head: `${prBranch}`,
                 changes: [
                     {
                         files: {
-                            [`${schemaName}.schema.json`]: {
-                                content: JSON.stringify(finalJsonOutput(definitions, jsonData), undefined, 4),
+                            [`components/classes/${props.schemaName}.schema.json`]: {
+                                content:  JSON.stringify(jsonData, null, "\t")  
                             },
                         },
-                        commit: `commiting ${schemaName}.schema.json changes`,
+                        commit: `commiting ${props.schemaName}.schema.json changes`,
                     },
                 ],
             })
@@ -74,7 +78,7 @@ const RightPanel = (props) => {
     useEffect(() => {
         if (props.jsonData) {
             // console.log('RIGHTPANEL', props.jsonData)
-       
+            
             let jsonString = JSON.stringify(props.jsonData)
             console.log(jsonString);
             jsonString = jsonString.replace("definitionName",props.schemaName)
@@ -105,15 +109,15 @@ const RightPanel = (props) => {
         const validjson = IsValidJSONString(e)
         
             if (validjson){
-              return  props.getobjectfromJson(e)
+            return  props.getobjectfromJson(e)
             }
         
-          
+        
     }
 
     return (
-       <div style={{display: 'flex', flexDirection: 'column', width: '100%', margin: '5px' ,backgroundColor : '#1E1E1E' }}>
-           {!minimized ? <div >
+        <div style={{display: 'flex', flexDirection: 'column', width: '100%', margin: '5px' ,backgroundColor : '#1E1E1E' }}>
+        {!minimized ? <div >
         <div style={{position: 'absolute', right: '30px', bottom: '10px', margin: '10px', zIndex: '10'}}>
         <ActionButton width="size-115" marginEnd="size-10"
                                 onPress={() => onWindowAction(true)}
@@ -121,7 +125,7 @@ const RightPanel = (props) => {
                                 <Minimize/>
                             </ActionButton>
             <DialogTrigger>
-           
+            
                 <ActionButton width="size-100"><Alias></Alias></ActionButton>
                 {(close) => (
                     <Dialog>
@@ -135,10 +139,10 @@ const RightPanel = (props) => {
                     <Divider />
                     <Content>
                         <Form>
-                        <TextField label="Title" placeholder="Pull Request Title" autoFocus />
-                        <TextField label="Description" placeholder="Pull Request Description" />
-                        <TextField label="Branch" placeholder="main" />
-                        <TextField label="Username" placeholder="mprabhak@adobe.com" />
+                        <TextField label="Title" placeholder="Pull Request Title" autoFocus  onChange={setPrTitle} />
+                        <TextField label="Description" placeholder="Pull Request Description" onChange={setPrBody} />
+                        <TextField label="Branch" placeholder="main" onChange={setPrBranch}/>
+                        <TextField label="Username" placeholder="mprabhak@adobe.com" onChange={setPrUsername} />
                         </Form>
                     </Content>
                     <Footer>
@@ -150,7 +154,7 @@ const RightPanel = (props) => {
                         <Button variant="secondary" onPress={close}>
                         Cancel
                         </Button>
-                        <Button variant="cta" onPress={close}>
+                        <Button variant="cta" onPress={close} onPress={() => {createPR(); }}>
                         Create
                         </Button>
                     </ButtonGroup>
@@ -190,7 +194,7 @@ const RightPanel = (props) => {
                                 <Maximize/>
                                 {/* <Maximize /> */}
                             </ActionButton></div>}
-       </div>
+        </div>
     )
 }
 
