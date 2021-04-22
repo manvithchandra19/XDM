@@ -374,6 +374,7 @@ const Schema2 = () => {
                     <RightPanel jsonData={schemaObjects[currentIndex]?.jsonData.class ?? undefined}
                     getobjectfromJson = {(e) => getobjectfromJson(e)}
                     schemaName = {schemaName}
+                    behaviour = {behaviour}
                     type = {schemaObjects[currentIndex]?.type ?? ""}/>
                 </SplitterPanel>
             </Splitter>

@@ -43,7 +43,12 @@ const RightPanel = (props) => {
         console.log(prBranch);
         console.log(prUsername);
        //path = components/mixins/profile
-       
+       let xdmPah = ""
+       if (props.type === 'mixin'){
+        xdmPah = `components/mixins/${props.behaviour}/${props.schemaName}.schema.json`
+    }else{
+        xdmPah = `components/classes/${props.schemaName}.schema.json`
+    }
     
     
         octokit
@@ -57,7 +62,7 @@ const RightPanel = (props) => {
                 changes: [
                     {
                         files: {
-                            [`components/classes/${props.schemaName}.schema.json`]: {
+                            [xdmPah]: {
                                 content:  JSON.stringify(jsonData, null, "\t")  
                             },
                         },
