@@ -82,8 +82,8 @@ const RightPanel = (props) => {
             console.log(copy);
                 octokit
                     .createPullRequest({
-                        owner: "mehakmg",
-                        repo: "testPr",
+                        owner: "manvithchandra19",
+                        repo: "XDM1",
                         title: `${prTitle} Created by ${prUsername}`,
                         body: `${prBody} `,
                         base: "main" /* optional: defaults to default branch */,
