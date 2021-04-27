@@ -2,18 +2,14 @@ import React, { useEffect, useState } from 'react'
 import JSONInput from 'react-json-editor-ajrm'
 import locale    from 'react-json-editor-ajrm/locale/en';
 import { Octokit } from "@octokit/core";
-import { addPropertyHandler, finalJsonOutput, getDefaultDefinitions, getDefaultJson, initialObject, plusHandler, updateValue, deleteProp } from "./xdm2";
-// import TextField from "@material-ui/core/TextField";
 import { ActionButton, Button } from '@react-spectrum/button';
 import { AlertDialog, Dialog, DialogTrigger } from '@react-spectrum/dialog';
 import { Heading } from '@react-spectrum/text';
 import { Flex } from '@react-spectrum/layout';
-import { Link } from '@react-spectrum/link';
 import { Header, Divider, Content, Form, Footer, Checkbox, ButtonGroup, Text, TextField} from '@adobe/react-spectrum'
 import Alias from '@spectrum-icons/workflow/Alias';
 import Minimize from "@spectrum-icons/workflow/Minimize";
 import Maximize from "@spectrum-icons/workflow/Maximize";
-
 
 
 const RightPanel = (props) => {
@@ -21,7 +17,6 @@ const RightPanel = (props) => {
     // console.log('RIGHTPANEL', props)
     const [jsonData, setJsonData] = useState({});
     const [minimized , setMinimized] = useState(false)
-    const [schemaName, setschemaName] = useState('');
     // const [definitions, setDefinitions] = useState(getDefaultDefinitions());
 
     const [prTitle, setPrTitle] = useState("");
@@ -31,71 +26,94 @@ const RightPanel = (props) => {
 
     const { createPullRequest } = require("octokit-plugin-create-pull-request");
     const MyOctokit = Octokit.plugin(createPullRequest);
-    const TOKEN = "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"; // create token at https://github.com/settings/tokens/new?scopes=repo
+    const TOKEN = "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"; // create token at https://github.com/settings/tokens/new?scopes=repo
     const octokit = new MyOctokit({
         auth: TOKEN,
     });
-
-    const createPR = () => {
-        console.log(props.schemaName);
-        console.log(prTitle);
-        console.log(prBody);
-        console.log(prBranch);
-        console.log(prUsername);
-       //path = components/mixins/profile
-       let xdmPah = ""
-       if (props.type === 'mixin'){
-        xdmPah = `components/mixins/${props.behaviour}/${props.schemaName}.schema.json`
-    }else{
-        xdmPah = `components/classes/${props.schemaName}.schema.json`
-    }
-    
-    
-        octokit
-            .createPullRequest({
-                owner: "manvithchandra19",
-                repo: "XDM1",
-                title: `${prTitle} Created by ${prUsername}`,
-                body: `${prBody} `,
-                base: "main" /* optional: defaults to default branch */,
-                head: `${prBranch}`,
-                changes: [
-                    {
-                        files: {
-                            [xdmPah]: {
-                                content:  JSON.stringify(jsonData, null, "\t")  
-                            },
-                        },
-                        commit: `commiting ${props.schemaName}.schema.json changes`,
-                    },
-                ],
-            })
-            .then((pr) => {
-                console.log(pr.data.number)
-                alert("PR Created")
-                setPrTitle('');
-                setPrBody('');
-                setPrBranch('');
-                setPrUsername('');
-            });
-    };
 
     useEffect(() => {
         if (props.jsonData) {
             // console.log('RIGHTPANEL', props.jsonData)
             
             let jsonString = JSON.stringify(props.jsonData)
-            console.log(jsonString);
+            // console.log(jsonString);
             jsonString = jsonString.replace("definitionName",props.schemaName)
             if (props.type === 'mixin'){
                 jsonString = jsonString.replace("meta:extends", "meta:intendedToExtend")
             }
             const copy = JSON.parse(jsonString);
             setJsonData(copy)
+           
         } else {
             setJsonData(undefined)
         }
     }, [props.jsonData]) 
+
+    const createPR = () => {
+      
+        {props.schemas.map((obj,index)=>{
+            console.log("obj",obj);
+            if (props.behaviour === "" && obj.type === 'mixin'){
+                alert('Please select behaviour')
+            }else{
+                console.log(props.schemaName);
+                console.log(obj.type);
+                console.log(prBody);
+                console.log(prBranch);
+                console.log(jsonData);
+
+                let jsonString = JSON.stringify(obj.jsonData.class)
+                // console.log(jsonString);
+                jsonString = jsonString.replace("definitionName",obj.jsonData.schemaName)
+               //path = components/mixins/profile
+               let xdmPah = ""
+               if (obj.type === 'mixin'){
+               
+                console.log(obj.jsonData)
+                jsonString = jsonString.replace("meta:extends", "meta:intendedToExtend")
+                // schemaname = obj.jsonData.class["meta:intendedToExtend"]
+                // let val = schemaname.split('/');
+                // schemaname = val[val.length-1]
+                xdmPah = `components/mixins/${obj.jsonData.behaviour}/${obj.jsonData.schemaName}.schema.json`
+            }else{
+                xdmPah = `components/classes/${obj.jsonData.schemaName}.schema.json`
+            }
+            const copy = JSON.parse(jsonString);
+            console.log(copy);
+                octokit
+                    .createPullRequest({
+                        owner: "mehakmg",
+                        repo: "testPr",
+                        title: `${prTitle} Created by ${prUsername}`,
+                        body: `${prBody} `,
+                        base: "main" /* optional: defaults to default branch */,
+                        head: `${prBranch}`,
+                        changes: [
+                            {
+                                files: {
+                                    [xdmPah]: {
+                                        content:  JSON.stringify(copy, null, "\t")  
+                                    },
+                                },
+                                commit: `commiting ${obj.jsonData.schemaName}.schema.json changes`,
+                            },
+                        ],
+                    })
+                    .then((pr) => {
+                        console.log(pr.data.number)
+                        alert("PR Created")
+                        setPrTitle('');
+                        setPrBody('');
+                        setPrBranch('');
+                        setPrUsername('');
+                    });
+            }
+        })}
+        
+        
+    };
+
+  
 
     const onWindowAction = (val) => {
         setMinimized(val)
@@ -112,11 +130,9 @@ const RightPanel = (props) => {
 
     const onChangeJson = (e)  => {
         const validjson = IsValidJSONString(e)
-        
             if (validjson){
-            return  props.getobjectfromJson(e)
+                 return  props.getobjectfromJson(e)
             }
-        
         
     }
 
@@ -166,16 +182,7 @@ const RightPanel = (props) => {
                     </Dialog>
                 )}
             </DialogTrigger>
-            {/* <TextField id="outlined-basic" label="PR Title" variant="outlined" value={prTitle} onChange={(e) => setPrTitle(e.target.value)}/>
-            &nbsp;
-            <TextField  id="outlined-basic" label="PR Description" variant="outlined" value={prBody} onChange={(e) => setPrBody(e.target.value)}/>
-            &nbsp;
-            <TextField  id="outlined-basic" label="PR Branch" variant="outlined" value={prBranch} onChange={(e) => setPrBranch(e.target.value)}/>
-            &nbsp;
-            <TextField   id="outlined-basic" label="Username" variant="outlined" value={prUsername} onChange={(e) => setPrUsername(e.target.value)}/>
-            &nbsp;
-            <Button variant="contained"   onClick={() => { createPR(); }}>Create PR</Button>
-             */}
+            
         
         </div>
         <JSONInput
@@ -197,7 +204,6 @@ const RightPanel = (props) => {
                                 onPress={() => onWindowAction(false)}
                             >
                                 <Maximize/>
-                                {/* <Maximize /> */}
                             </ActionButton></div>}
         </div>
     )

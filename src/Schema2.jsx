@@ -10,6 +10,8 @@ import 'bootstrap/dist/css/bootstrap.css';
 import { addPropertyHandler, plusHandler, updateValue, deleteProp } from "./xdm2";
 import { ActionButton } from '@react-spectrum/button';
 
+import {  getFirstValueFromMap,getFirstKeyFromMap } from "./xdm2";
+
 
 const baseObject = {
     "meta:license": [
@@ -46,18 +48,14 @@ const Schema2 = () => {
         {type: 'mixin', label: 'Add Mixin', style: {background: '#B582A3'}},
         // {type: 'dataType', label: 'Add DT', style: {background: '#D66D6C'}}
     ];
-    
-    // const [_schemaType, setschemaType] = useState('Class')
+     
+    const [schemaNameObj, setschemaNameObj] = useState([])
     const [schemaName, setschemaName] = useState('');
-    // const [schemaTitle, setschemaTitle] = useState('');
-    // const [schemadescription, setDescription] = useState('');
-    // const [metaStatus, setmetastatus] = useState('');
+    
     const [behaviour, setbehaviour] = useState('');
-    // const [clazzName, setClazzName] = useState('');
+    const [behaviourObj, setbehaviourObj] = useState([]);
 
     const [currentIndex , setCurrentIndex] = useState(0);
-
-    // const [definitions, setDefinitions] = useState(getDefaultDefinitions());
     const [schemaObjects, setSchemaObjects] = useState([]) //schemaObjects[currentIndex]
 
     //for adding the properties
@@ -207,7 +205,7 @@ const Schema2 = () => {
         const schemaObjectsCopy = JSON.parse(JSON.stringify(schemaObjects));
         schemaObjectsCopy[currentIndex].jsonData.class["meta:extends"] = `https://ns.genesis.com/xdm/${schemaName}/${e}`
         setbehaviour(e)
-        
+        schemaObjectsCopy[currentIndex].jsonData.behaviour = e
         setSchemaObjects(schemaObjectsCopy);
     }
 
@@ -216,6 +214,7 @@ const Schema2 = () => {
         const schemaObjectsCopy = JSON.parse(JSON.stringify(schemaObjects));
         schemaObjectsCopy[currentIndex].jsonData.class["meta:extends"] = `https://ns.genesis.com/xdm/${schemaName}/${e}`
         setbehaviour(e)
+        schemaObjectsCopy[currentIndex].jsonData.behaviour = e
         setSchemaObjects(schemaObjectsCopy);
     }
 
@@ -242,7 +241,13 @@ const Schema2 = () => {
                 schemaObjectsCopy[currentIndex].jsonData.class["meta:extends"] = `https://ns.genesis.com/xdm/${e}/${behaviour}`
                 // activeSchemaCopy.jsonData.class.allOf = [{'$ref':`#/definitions/${e}`}];
                 schemaObjectsCopy[index].jsonData.class.allOf =[{'$ref':`#/definitions/${e}`}];
-                
+                // let jsonString = JSON.stringify(schemaObjectsCopy[index].jsonData.class)
+                // const propertiesVal = getFirstKeyFromMap(schemaObjectsCopy[index].jsonData.class.definitions)
+                // console.log(JSON.stringify(schemaObjectsCopy[index].jsonData.class));
+                // jsonString = jsonString.replace(propertiesVal,e)
+                // let copy =  JSON.parse(jsonString)
+                // schemaObjectsCopy[index].jsonData.class = copy
+                schemaObjectsCopy[index].jsonData.schemaName = e
                 
                 break;
                 case "schemaTitle":
@@ -294,7 +299,7 @@ const Schema2 = () => {
         console.log(currentIndex );
         switch (type) {
             case 'class':
-                const classSchema = {type: 'class', minimized: false, jsonData: {class:baseObject} 
+                const classSchema = {type: 'class', minimized: false, jsonData: {class:baseObject , schemaName : schemaName,behaviour :behaviour} 
                 };
                 setActiveSchema(classSchema)
                 schemaObjectsCP.push(classSchema);
@@ -302,7 +307,7 @@ const Schema2 = () => {
                 setSchemaObjects(schemaObjectsCP);
                 break;
             case 'mixin':
-                const mixinSchema = {type: 'mixin', minimized: false,  jsonData: {class:baseObject} 
+                const mixinSchema = {type: 'mixin', minimized: false,  jsonData: {class:baseObject , schemaName : schemaName,behaviour :behaviour} 
                 };
                 setActiveSchema(mixinSchema)
                 schemaObjectsCP.push(mixinSchema);
@@ -375,6 +380,7 @@ const Schema2 = () => {
                     getobjectfromJson = {(e) => getobjectfromJson(e)}
                     schemaName = {schemaName}
                     behaviour = {behaviour}
+                    schemas={schemaObjects} 
                     type = {schemaObjects[currentIndex]?.type ?? ""}/>
                 </SplitterPanel>
             </Splitter>

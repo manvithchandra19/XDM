@@ -14,59 +14,8 @@ import DeleteOutline from "@spectrum-icons/workflow/DeleteOutline";
 import Minimize from "@spectrum-icons/workflow/Minimize";
 import Maximize from "@spectrum-icons/workflow/Maximize";
 
-
-// const useStyles = makeStyles((theme) => ({
-//     root: {
-//         flexGrow: 1,
-//         "& .MuiTextField-root": {
-//             margin: theme.spacing(1),
-//             width: 167
-//         }
-//     },
-//     paper: {
-//         padding: theme.spacing(2),
-//         textAlign: 'center',
-//         color: theme.palette.text.secondary,
-//     },
-
-//     button: {
-//         margin: theme.spacing.unit,
-//         width: 50,
-//     },
-//     input: {
-//         // display: 'none',
-//         height: 28,
-//         width:80
-//     },
-
-//     formControl: {
-//         margin: theme.spacing(1),
-//         minWidth: 140,
-//     },
-//     selectEmpty: {
-//         marginTop: theme.spacing(2),
-//     },
-// }));
-
 const LeftPanel = (props) => {
 
-
-    // const classes = useStyles();
-
-    // const [className, setClassName] = useState("");
-    // const [mixinBehaviour, setMixinBehaviour] = useState('');
-
-    // const classess = [
-    //     { name: 'profile' },
-    //     { name: 'experience event' },
-    //     { name: 'product' }
-    // ];
-
-    // const behaviourVal = [
-    //     { name: 'record' },
-    //     { name: 'timeseries' }
-    // ];
-   
     const renderHighLevelProperty1 = (val, i, plusProperty,mainIndex) => {
         console.log("Object Key =====" + i);
         const objKey = Object.keys(val)[0];
@@ -83,12 +32,9 @@ const LeftPanel = (props) => {
         return (
             <div style={{ marginLeft: '2.25rem' }}>
                 {plusProperty ? <span style={{ marginLeft: '2.25rem' }} ></span> : null}
-                {/* <Fab size="small" aria-label="Add" className={classes.margin} onClick={props.plusHandlerFactory(i,mainIndex)}>
-                    <AddIcon />
-                </Fab> */}
+              
                 <Button onClick={props.plusHandlerFactory(i,mainIndex)} width = '10px'><IconAdd/></Button>
-                {/* InputProps={{ className: classes.input }} */}
-                {/* <Button icon="pi pi-check" onClick={props.plusHandlerFactory(i,mainIndex)}/> */}
+              
                 <TextField   width= '160px'
                     id="outlined-basic"  variant="outlined" name="propertyNamespace" placeholder = "Property Namespace"
                     defaultValue=''//value={keyValues[0]}
@@ -116,10 +62,7 @@ const LeftPanel = (props) => {
                     onChange={props.updateHandlerFactory("examples", i)} />
                      <Button  onClick={clickDeleteFunction( i,mainIndex)} width = '10px'><Delete/></Button>
                      <br/><br/>
-                {/* <IconButton style={{ width: '50px' }} aria-label="Delete" className={classes.margin}
-                   > */}
-                    {/* <DeleteIcon fontSize="small" />
-                </IconButton> */}
+               
                 {nestedValues.map((nv, ni) => {
                     console.log("nv", ni);
                     return nv
@@ -169,8 +112,7 @@ const LeftPanel = (props) => {
             {props.schemas.map((obj, index) => {
                 console.log('SCHEMAMAP', obj.jsonData.class.title)
             console.log("index === ",index);
-            //    props.currentIndex(index)
-                //  console.log(val)
+          
                    const propertiesVal = getFirstValueFromMap(obj.jsonData.class.definitions)
                    console.log("propertiessss",propertiesVal);
                 if (obj.minimized) {
@@ -242,12 +184,7 @@ const LeftPanel = (props) => {
                         </Flex>
 
                         <div>
-                        {/* <AutosizeInput
-	
-	defaultValue=''
-	onChange={(e) => props.onJRTESTChange(e.target.value, index, "schemaName")}
-/> */}
-                            
+                      
                             {schemaNameTextfield(obj,index)}
                             <TextField
                                 name="schemaTitle"
@@ -280,14 +217,6 @@ const LeftPanel = (props) => {
                             <Item key="timeseries">Timeseries</Item>
                           </Picker>
                            
-                                // <div className="dropdown-demo" style={{ marginLeft: 10 }}>
-                                //     <Dropdown value={mixinBehaviour}
-                                //         options={behaviourVal}
-                                //         onChange={onmixinChange}
-                                //         optionLabel="name"
-                                //         placeholder="Behaviour" />
-                                //    
-                                // </div> 
                                 : null}
 <Picker  width= '130px'  marginTop = '10px' onSelectionChange={(e) => props.onMetaStatusChange(e)} placeholder="Meta Status">
                            <Item key="experimental">Experimental</Item>
