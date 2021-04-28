@@ -19,14 +19,16 @@ const RightPanel = (props) => {
     const [minimized , setMinimized] = useState(false)
     // const [definitions, setDefinitions] = useState(getDefaultDefinitions());
 
+    
     const [prTitle, setPrTitle] = useState("");
     const [prBody, setPrBody] = useState("");
     const [prBranch, setPrBranch] = useState("");
     const [prUsername, setPrUsername] = useState("");
+    
 
     const { createPullRequest } = require("octokit-plugin-create-pull-request");
     const MyOctokit = Octokit.plugin(createPullRequest);
-    const TOKEN = "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"; // create token at https://github.com/settings/tokens/new?scopes=repo
+    const TOKEN = "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"; // create token at https://github.com/settings/tokens/new?scopes=repo
     const octokit = new MyOctokit({
         auth: TOKEN,
     });
@@ -50,8 +52,9 @@ const RightPanel = (props) => {
     }, [props.jsonData]) 
 
     const createPR = () => {
+        const files= {};
       
-        {props.schemas.map((obj,index)=>{
+        {props.schemas.map((obj,index)=>{ //2
             console.log("obj",obj);
             if (props.behaviour === "" && obj.type === 'mixin'){
                 alert('Please select behaviour')
@@ -80,36 +83,36 @@ const RightPanel = (props) => {
             }
             const copy = JSON.parse(jsonString);
             console.log(copy);
-                octokit
-                    .createPullRequest({
-                        owner: "manvithchandra19",
-                        repo: "XDM1",
-                        title: `${prTitle} Created by ${prUsername}`,
-                        body: `${prBody} `,
-                        base: "main" /* optional: defaults to default branch */,
-                        head: `${prBranch}`,
-                        changes: [
-                            {
-                                files: {
-                                    [xdmPah]: {
-                                        content:  JSON.stringify(copy, null, "\t")  
-                                    },
-                                },
-                                commit: `commiting ${obj.jsonData.schemaName}.schema.json changes`,
-                            },
-                        ],
-                    })
-                    .then((pr) => {
-                        console.log(pr.data.number)
-                        alert("PR Created")
-                        setPrTitle('');
-                        setPrBody('');
-                        setPrBranch('');
-                        setPrUsername('');
-                    });
+            files[xdmPah] = {
+                content:  JSON.stringify(copy, null, "\t")  
+            };
+        
             }
         })}
-        
+        octokit
+        .createPullRequest({
+            owner: "manvithchandra19",
+            repo: "XDM1",
+            title: `${prTitle} Created by ${prUsername}`,
+            body: `${prBody} `,
+            base: "main" /* optional: defaults to default branch */,
+            head: `${prBranch}`,
+           
+            changes: [
+                {
+                    files: files,
+                    commit: `commiting json file`,
+                },
+            ],
+        })
+        .then((pr) => {
+            console.log(pr.data.number)
+            alert("PR Created")
+            setPrTitle('');
+            setPrBody('');
+            setPrBranch('');
+            setPrUsername('');
+        });
         
     };
 
