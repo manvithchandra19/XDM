@@ -28,7 +28,7 @@ const RightPanel = (props) => {
 
     const { createPullRequest } = require("octokit-plugin-create-pull-request");
     const MyOctokit = Octokit.plugin(createPullRequest);
-    const TOKEN = "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"; // create token at https://github.com/settings/tokens/new?scopes=repo
+    const TOKEN = "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"; // create token at https://github.com/settings/tokens/new?scopes=repo
     const octokit = new MyOctokit({
         auth: TOKEN,
     });
@@ -91,11 +91,11 @@ const RightPanel = (props) => {
         })}
         octokit
         .createPullRequest({
-            owner: "manvithchandra19",
-            repo: "XDM1",
+            owner: "adobe",
+            repo: "xdm",
             title: `${prTitle} Created by ${prUsername}`,
             body: `${prBody} `,
-            base: "main" /* optional: defaults to default branch */,
+            base: "master" /* optional: defaults to default branch */,
             head: `${prBranch}`,
            
             changes: [

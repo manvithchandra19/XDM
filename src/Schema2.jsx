@@ -2,15 +2,13 @@ import { Splitter, SplitterPanel } from 'primereact/splitter'
 import LeftPanel from './LeftPanel'
 import RightPanel from './rightPanel'
 import './Schema2.css'
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import 'primeicons/primeicons.css';
 import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import { addPropertyHandler, plusHandler, updateValue, deleteProp } from "./xdm2";
 import { ActionButton } from '@react-spectrum/button';
-
-import {  getFirstValueFromMap,getFirstKeyFromMap } from "./xdm2";
 
 
 const baseObject = {
@@ -42,21 +40,20 @@ const baseObject = {
 // MAIN COMPONENT
 const Schema2 = () => {
 
-
     const schemaTypes = [
         {type: 'class', label: 'Add Class', style: {background: '#9498DC'}},
         {type: 'mixin', label: 'Add Mixin', style: {background: '#B582A3'}},
         // {type: 'dataType', label: 'Add DT', style: {background: '#D66D6C'}}
     ];
      
-    const [schemaNameObj, setschemaNameObj] = useState([])
     const [schemaName, setschemaName] = useState('');
     
     const [behaviour, setbehaviour] = useState('');
-    const [behaviourObj, setbehaviourObj] = useState([]);
 
     const [currentIndex , setCurrentIndex] = useState(0);
     const [schemaObjects, setSchemaObjects] = useState([]) //schemaObjects[currentIndex]
+
+
 
     //for adding the properties
     const handleInputChange = (e, changingProp, objKey) => {  //e = input value , objKey : index of property
@@ -125,7 +122,6 @@ const Schema2 = () => {
            setSchemaObjects(schemaObjectsCopy);
        }
         
-      
     };
 
     //closures
@@ -144,7 +140,7 @@ const Schema2 = () => {
            
         }
     }
-
+    
     const addDynamicPropertyRow = (index) => {
         const activeSchemaCopy1 = JSON.parse(JSON.stringify(schemaObjects[index]));
         console.log("clicked add properties");
@@ -369,6 +365,8 @@ const Schema2 = () => {
                      schemaName = {schemaName}
                      onMetaStatusChange = {(e)=> onMetaStatusChange(e)}
                      setschemaName = {(e) => setschemaName(e)}
+                    //  refreshpage = { () => refreshpage()}
+                    //  resumePage = {() => resumePage()}
                      setActiveSchema={(index) => setActiveSchema(schemaObjects[index])}
 
                    />
@@ -376,12 +374,12 @@ const Schema2 = () => {
                 </SplitterPanel>
                 <SplitterPanel size={22}>
                     {/* {console.log('ACTIVESCHEMA', activeSchema?.jsonData ?? undefined)} */}
-                    <RightPanel jsonData={schemaObjects[currentIndex]?.jsonData.class ?? undefined}
+                    <RightPanel jsonData={schemaObjects[currentIndex]?.jsonData.class ??undefined} //
                     getobjectfromJson = {(e) => getobjectfromJson(e)}
                     schemaName = {schemaName}
                     behaviour = {behaviour}
                     schemas={schemaObjects} 
-                    type = {schemaObjects[currentIndex]?.type ?? ""}/>
+                    type =  {schemaObjects[currentIndex]?.type ?? ""}/>
                 </SplitterPanel>
             </Splitter>
 
