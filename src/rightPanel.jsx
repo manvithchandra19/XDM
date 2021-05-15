@@ -150,7 +150,7 @@ const RightPanel = (props) => {
                             </ActionButton>
             <DialogTrigger>
             
-                <ActionButton width="size-100"><Alias></Alias></ActionButton>
+                <ActionButton width="100">Create PR</ActionButton> 
                 {(close) => (
                     <Dialog>
                     <Heading>
@@ -203,10 +203,10 @@ const RightPanel = (props) => {
             // height="100%"
         />
         
-    </div> : <div> <ActionButton width="size-115" marginEnd="size-10"
+    </div> : <div> <ActionButton width="115" marginEnd="size-10"
                                 onPress={() => onWindowAction(false)}
-                            >
-                                <Maximize/>
+                            >JSON View
+                                {/* <Maximize/> */}
                             </ActionButton></div>}
         </div>
     )
